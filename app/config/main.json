@@ -1,0 +1,21 @@
+{
+    "site": {
+        "interface": {
+            "output": "html5",
+            "layout": "iu-branding-2015"
+        },
+        "settings": {
+            "mode": "development",
+            "debug": true,
+            "twigCache": "/tmp/twig"
+        }
+    },
+    "database": {
+        "driver": "pdo_mysql",
+        "user": "clamav",
+        "password": "clamav",
+        "host": "localhost",
+        "port": "3306",
+        "dbname": "clamav"
+    }
+}
