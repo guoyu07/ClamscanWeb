@@ -2,6 +2,7 @@
 /**
  * This file contains the Webtech Application class
  * @license MIT
+ * @author Anthony Vitacco <avitacco@iu.edu>
  */
 namespace Iu\Uits\Webtech;
 

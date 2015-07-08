@@ -7,7 +7,8 @@
         "settings": {
             "mode": "development",
             "debug": true,
-            "twigCache": "/tmp/twig"
+            "twigCache": "/tmp/twig",
+            "timezone": "America/Indiana/Indianapolis"
         }
     },
     "database": {

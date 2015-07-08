@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is the bootstrap file for this application
+ * @license MIT
+ * @author Anthony Vitacco <avitacco@iu.edu>
+ */
 
 /**
  * The composer autoloader is the glue that holds this whole thing together

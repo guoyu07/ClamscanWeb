@@ -1,4 +1,9 @@
 <?php
+/**
+ * This file is the main web page for this application
+ * @license MIT
+ * @author Anthony Vitacco <avitacco@iu.edu>
+ */
 
 /**
  * Include the bootstrap file for this application
