@@ -5,9 +5,11 @@
     <link href="https://assets.iu.edu/web/1.x/css/global.css" rel="stylesheet" type="text/css">
     <link href="https://assets.iu.edu/brand/1.x/brand.css" rel="stylesheet" type="text/css">
     <link href="https://assets.iu.edu/search/1.x/search.css" rel="stylesheet" type="text/css">
+    <link href="/files/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <style>
-        body {
-            margin: 0;
+        .main-container {
+            margin-top: 3em;
+            margin-bottom: 3em;
         }
     </style>
 {% endblock %}
@@ -28,7 +30,12 @@
         </div>
     </div>
     
-    <div class="content">{% block content %}{% endblock %}</div>
+    <div class="container main-container">
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
     
     <footer id="footer-v1" role="contentinfo" itemscope="itemscope" itemtype="http://schema.org/CollegeOrUniversity">
         <div class="wrapper">
@@ -43,4 +50,6 @@
             </p>
         </div>
     </footer>
+    <script type="text/javascript" src="/files/jquery.min.js"></script>
+    <script type="text/javascript" src="/files/bootstrap/js/bootstrap.min.js"></script>
 {% endblock %}
