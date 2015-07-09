@@ -35,7 +35,7 @@ class JobRunner extends Command
      *
      */
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {
         $formatter = $this->getHelperSet()->get("formatter");
         $em = $this->deps["entityManager"];
         
@@ -43,7 +43,6 @@ class JobRunner extends Command
         $jobs = $query->getResult();
         
         foreach ($jobs as $job) {
-            
             /**
              * Set the job state to running, this may be excessive, but what the
              * heck. We can do it, and it would be good to know anyway.
@@ -108,7 +107,7 @@ class JobRunner extends Command
          * Deal with the "files" section of the output
          */
         preg_match_all("/(?P<file>.*?)\:\s(?P<status>.*)/", $parts[0], $files, PREG_SET_ORDER);
-        foreach($files as $key => $value) {
+        foreach ($files as $key => $value) {
             /**
              * We don't want the numerically indexed results or the original
              * string match. I kind of hate that preg_match returns those
@@ -123,7 +122,7 @@ class JobRunner extends Command
          */
         preg_match_all("/(?P<key>.*?)\:\s(?P<value>.*)/", $parts[1], $summaryParts, PREG_SET_ORDER);
         $summary = [];
-        foreach($summaryParts as $summaryPart) {
+        foreach ($summaryParts as $summaryPart) {
             $summary[$summaryPart["key"]] = $summaryPart["value"];
         }
         
