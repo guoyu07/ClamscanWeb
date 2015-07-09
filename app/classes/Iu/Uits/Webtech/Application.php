@@ -6,8 +6,8 @@
  */
 namespace Iu\Uits\Webtech;
 
-use Symfony\Application\TwigTrait;
-use Symfony\Application\UrlGeneratorTrait;
+use Silex\Application\TwigTrait;
+use Silex\Provider\UrlGeneratorServiceProvider;
 
 /**
  * This class extends the Silex Application class to add in a couple traits

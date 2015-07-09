@@ -16,7 +16,8 @@
         "filp/whoops": "^1.1",
         "twbs/bootstrap": "^3.3",
         "components/jquery": "^2.1",
-        "symfony/twig-bridge": "^2.7"
+        "symfony/twig-bridge": "^2.7",
+        "ramsey/uuid": "^2.8"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.3"

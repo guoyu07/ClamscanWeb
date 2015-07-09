@@ -46,6 +46,8 @@ class JobQueue
         $job->state = "waiting";
         $job->username = $request->get("username");
         $job->reportAddress = $request->get("alertEmail");
+        $job->excludeDirs = explode(",", $request->get("excludeDirs"));
+        $job->excludeFiles = explode(",", $request->get("excludeFiles"));
         
         /**
          * Get an instance of the doctrine entity manager and use that to store
@@ -56,7 +58,29 @@ class JobQueue
         $em->flush();
         
         return $this->app->redirect(
-            $this->app->path("index")
+            $this->app["url_generator"]->generate("index")
         );
+    }
+    
+    /**
+     * Get a list of jobs by state
+     *
+     * @param array $state The list of states we want to get jobs in
+     * @return object A symfony request object
+     */
+    public function getJobsByState($states)
+    {
+        $em = $this->app["deps"]["entityManager"];
+        $qb = $em->createQueryBuilder();
+        $qb->select("j")
+        ->from("Iu\Uits\Webtech\Clam\Model\Job", "j");
+        
+        foreach ($states as $state) {
+            $state = filter_var($state, FILTER_SANITIZE_STRING);
+            $qb->orWhere("state = '{$state}'");
+        }
+        
+        $dql = $qb->getDql();
+        var_dump($dql);
     }
 }

@@ -1,42 +1,46 @@
 <?php
 /**
- * This file contains the Job database model for this application
+ * This file contains the Result database model for this application
  * @license MIT
  */
 namespace Iu\Uits\Webtech\Clam\Model;
 
 /**
- * This class represents a job within the ClamScanWeb application
+ * This class represents a result for a job executed by the ClamScanWeb
+ * application.
  * @author Anthony Vitacco <avitacco@iu.edu>
  *
  * @Entity
- * @Table(name="ClamScanJobs")
+ * @Table(name="ClamScanResults")
  */
-class Job
+class Result
 {
-    /** @Id @Column(type="integer") @GeneratedValue */
+    /** @Id @Column(type="guid") */
     private $id;
     
     /** @Column(type="datetimetz") */
-    private $addedAt;
+    private $completedAt;
     
-    /** @Column(type="string", length=12) */
-    private $state;
+    /** @Column(type="smallint", length=16) */
+    private $scannedDirectories;
     
-    /** @Column(type="string", length=32) */
-    private $username;
+    /** @Column(type="smallint", length=16) */
+    private $scannedFiles;
     
-    /** @Column(type="string", length=64) */
-    private $reportAddress;
+    /** @Column(type="smallint", length=8) */
+    private $infectedFiles;
+    
+    /** @Column(type="string") */
+    private $dataScanned;
+    
+    /** @Column(type="string") */
+    private $dataRead;
+    
+    /** @Column(type="string") */
+    private $executionTime;
     
     /** @Column(type="array") */
-    private $excludeDirs;
-    
-    /** @Column(type="array") */
-    private $excludeFiles;
-    
-    /** @Column(type="guid", nullable=true) */
-    private $result;
+    private $fileResults;
     
     /**
      * Magic set function, sets keys for this class

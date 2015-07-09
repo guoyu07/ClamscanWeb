@@ -11,6 +11,12 @@
             "timezone": "America/Indiana/Indianapolis"
         }
     },
+    "command": {
+        "paths": {
+            "homeRoot": "/home",
+            "lockFile": "/tmp/clamJobRunner.lock"
+        }
+    },
     "database": {
         "driver": "pdo_mysql",
         "user": "clamav",

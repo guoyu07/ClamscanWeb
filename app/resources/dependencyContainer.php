@@ -54,7 +54,7 @@ $deps["entityManager"] = $deps->share(function ($deps) {
         $deps["configMain"]->site->settings->debug
     );
     return \Doctrine\ORM\EntityManager::create(
-        $deps["database"],
+        (array)$deps["configMain"]->database,
         $config
     );
 });
