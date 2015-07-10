@@ -43,6 +43,7 @@ class JobQueue
          */
         $job = new Job();
         $job->addedAt = new \DateTime("now", $this->app["deps"]["timezone"]);
+        $job->addedBy = $request->server->get("REMOTE_USER");
         $job->state = "waiting";
         $job->username = $request->get("username");
         $job->reportAddress = $request->get("alertEmail");
@@ -77,10 +78,11 @@ class JobQueue
         
         foreach ($states as $state) {
             $state = filter_var($state, FILTER_SANITIZE_STRING);
-            $qb->orWhere("state = '{$state}'");
+            $qb->orWhere("j.state = '{$state}'");
         }
         
-        $dql = $qb->getDql();
-        var_dump($dql);
+        $query = $em->createQuery($qb->getDql());
+        $jobs = $query->getArrayResult();
+        return $jobs;
     }
 }

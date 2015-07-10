@@ -20,6 +20,9 @@ class Job
     /** @Column(type="datetimetz") */
     private $addedAt;
     
+    /** @Column(type="string", length=8) */
+    private $addedBy;
+    
     /** @Column(type="string", length=12) */
     private $state;
     

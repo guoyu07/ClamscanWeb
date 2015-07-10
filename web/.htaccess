@@ -1,5 +1,10 @@
 Options         -MultiViews
 
+AuthType	CAS
+AuthName	"IU-CAS"
+#Require	user	avitacco, fosterr, percival
+Require		valid-user
+
 RewriteEngine   On
 RewriteCond     %{REQUEST_FILENAME} !-f
 RewriteCond	%{REQUEST_FILENAME} !-d

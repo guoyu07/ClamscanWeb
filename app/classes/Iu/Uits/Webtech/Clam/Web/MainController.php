@@ -5,6 +5,9 @@
  */
 namespace Iu\Uits\Webtech\Clam\Web;
 
+use Iu\Uits\Webtech\Clam\JobQueue;
+use \Symfony\Component\HttpFoundation\Request;
+
 /**
  * Main Controller Class
  * This class is the main web page controller for this application
@@ -32,9 +35,24 @@ class MainController
      */
     public function showEnqueuePage()
     {
+        $queue = new JobQueue($this->app);
+        $waitingAndRunning = $queue->getJobsByState(["waiting", "running"]);
+        
+        $options = $this->app["options"];
+        $options["waitAndRunJobs"] = (array)$waitingAndRunning;
+        
         return $this->app["twig"]->render(
             "pages/index.twig",
-            $this->app["options"]
+            $options
         );
+    }
+    
+    /**
+     *
+     */
+    public function listAllJobs()
+    {
+        $queue = new JobQueue($this->app);
+        $waitingAndRunning = $queue->getJobsByState(["waiting", "running", "failed", "finished"]);
     }
 }

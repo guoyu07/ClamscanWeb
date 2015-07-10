@@ -1,10 +1,10 @@
 {% extends "/layouts/" ~ layout ~ ".twig" %}
 
-{% block pageTitle %}Test{% endblock %}
+{% block pageTitle %}ClamAV Web - Schedule a Scan{% endblock %}
 
 {% block content %}
     <h2>ClamAV Scan Scheduling</h2>
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="panel-title">Schedule a Scan</div>
         </div>
@@ -49,4 +49,28 @@
             </form>
         </div>
     </div>
+    
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Jobs: Waiting and Running</h3>
+            </div>
+            <div class="panel-body">
+                {% if waitAndRunJobs|length > 0 %}
+                    {% for job in waitAndRunJobs %}
+                        <p>
+                            <span class="label {% if job.state == "waiting" %}label-info{% else %}label-warning{% endif %}">{{ job.state|capitalize }}</span>
+                            <span>{{ job.username }}</span>
+                            <span>{{ job.addedAt|date }}</span>
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    <p>Currently, there are no jobs waiting or running.</p>
+                {% endif %}
+                <a href="" class="btn btn-default" role="button">
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                    View all jobs
+                </a>
+            </div>
+        </div>        
+    
 {% endblock %}
