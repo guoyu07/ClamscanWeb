@@ -26,6 +26,12 @@ $mainRoutes->get("/", "controllers.main:showEnqueuePage")
 ->bind("index");
 
 /**
+ *
+ */
+$mainRoutes->get("/list", "controllers.main:listAllJobs")
+->bind("listAllJobs");
+
+/**
  * Mount the routes to the appropriate path
  */
 $app->mount("/", $mainRoutes);

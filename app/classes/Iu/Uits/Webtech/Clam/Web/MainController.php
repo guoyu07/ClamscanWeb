@@ -39,7 +39,7 @@ class MainController
         $waitingAndRunning = $queue->getJobsByState(["waiting", "running"]);
         
         $options = $this->app["options"];
-        $options["waitAndRunJobs"] = (array)$waitingAndRunning;
+        $options["waitAndRunJobs"] = $waitingAndRunning;
         
         return $this->app["twig"]->render(
             "pages/index.twig",
@@ -53,6 +53,14 @@ class MainController
     public function listAllJobs()
     {
         $queue = new JobQueue($this->app);
-        $waitingAndRunning = $queue->getJobsByState(["waiting", "running", "failed", "finished"]);
+        $jobs = $queue->getJobsByState(["waiting", "running", "failed", "finished"]);
+        
+        $options = $this->app["options"];
+        $options["jobs"] = $jobs;
+        
+        return $this->app["twig"]->render(
+            "pages/allJobsList.twig",
+            $options
+        );
     }
 }
