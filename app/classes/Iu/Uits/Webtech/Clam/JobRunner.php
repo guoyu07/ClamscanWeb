@@ -92,6 +92,13 @@ class JobRunner extends Command
             $result->executionTime = $results["summary"]["Time"];
             $result->fileResults = $results["files"];
             $em->persist($result);
+            
+            /**
+             * Add the resultId to the job entry
+             */
+            $job->result = $result->id;
+            $em->persist($job);
+            
             $em->flush();
         }
     }

@@ -39,7 +39,7 @@ class Result
     /** @Column(type="string") */
     private $executionTime;
     
-    /** @Column(type="array") */
+    /** @Column(type="json_array") */
     private $fileResults;
     
     /**

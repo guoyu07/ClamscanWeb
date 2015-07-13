@@ -85,4 +85,32 @@ class JobQueue
         $jobs = $query->getArrayResult();
         return $jobs;
     }
+    
+    /**
+     *
+     */
+    public function getJobById($id)
+    {
+        $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+        $em = $this->app["deps"]["entityManager"];
+        $qb = $em->createQueryBuilder();
+        $qb->select("j")
+        ->from("Iu\Uits\Webtech\Clam\Model\Job", "j")
+        ->where("j.id = {$id}");
+        
+        $query = $em->createQuery($qb->getDql());
+        $job = $query->getArrayResult()[0];
+        
+        $resultsQb = $em->createQueryBuilder();
+        $resultsQb->select("r")
+        ->from("Iu\Uits\Webtech\Clam\Model\Result", "r")
+        ->where("r.id = '{$job["result"]}'");
+        
+        $resultQuery = $em->createQuery($resultsQb->getDql());
+        $result = $resultQuery->getArrayResult()[0];
+        
+        $job["result"] = $result;
+        
+        return $job;
+    }
 }

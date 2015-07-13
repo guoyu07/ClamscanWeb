@@ -32,6 +32,12 @@ $mainRoutes->get("/list", "controllers.main:listAllJobs")
 ->bind("listAllJobs");
 
 /**
+ *
+ */
+$mainRoutes->get("/job/{jobid}", "controllers.main:getJob")
+->bind("getJob");
+
+/**
  * Mount the routes to the appropriate path
  */
 $app->mount("/", $mainRoutes);

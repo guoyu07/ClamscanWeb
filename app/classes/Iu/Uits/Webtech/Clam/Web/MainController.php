@@ -63,4 +63,21 @@ class MainController
             $options
         );
     }
+    
+    /**
+     *
+     */
+    public function getJob($jobid)
+    {
+        $queue = new JobQueue($this->app);
+        $job = $queue->getJobById($jobid);
+        
+        $options = $this->app["options"];
+        $options["job"] = $job;
+        
+        return $this->app["twig"]->render(
+            "pages/jobDetails.twig",
+            $options
+        );
+    }
 }
