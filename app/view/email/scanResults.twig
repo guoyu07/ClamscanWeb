@@ -1,0 +1,78 @@
+<style>
+    body {
+        font-family: sans-serif;
+    }
+    h3 {
+        border-bottom: 1px solid;
+    }
+    div {
+        line-height: 1.5em;
+    }
+    th {
+        text-align: left;
+    }
+</style>
+<h2>ClamAV Job Details</h2>
+
+<h3>Job Information</h3>
+<div>
+    <strong>State: </strong> {{ job.state|capitalize }}
+</div>
+<div>
+    <strong>Added By:</strong> {{ job.addedBy }}
+</div>
+<div>
+    <strong>Added At:</strong> {{ job.addedAt|date }}
+</div>
+<div>
+    <strong>User To Scan:</strong> {{ job.username }}
+</div>
+<div>
+    <strong>Exclude Directories:</strong> {{ job.excludeDirs|join(",") }}
+</div>
+<div>
+    <strong>Exclude Files:</strong> {{ job.excludeFiles|join(",") }}
+</div>
+
+{% if job.result is not null %}
+    <h3>Scan Results</h3>
+    <div>
+        <strong>Completed:</strong> {{ job.result.completedAt|date }}
+    </div>
+    <div>
+        <strong>Scanned Directories:</strong> {{ job.result.scannedDirectories }}
+    </div>
+    <div>
+        <strong>Scanned Files:</strong> {{ job.result.scannedFiles }}
+    </div>
+    <div>
+        <strong>Infected Files:</strong> {{ job.result.infectedFiles }}
+    </div>
+    <div>
+        <strong>Data Scanned:</strong> {{ job.result.dataScanned }}
+    </div>
+    <div>
+        <strong>Data Read:</strong> {{ job.result.dataRead }}
+    </div>
+    <div>
+        <strong>Execution Time:</strong> {{ job.result.executionTime }}
+    </div>
+
+    <h3>Files</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Result</th>
+                <th>File</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in job.result.fileResults %}
+                <tr>
+                    <td>{{ result.status }}</td>
+                    <td>{{ result.file }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

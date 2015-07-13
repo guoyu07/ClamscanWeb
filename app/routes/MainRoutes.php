@@ -26,13 +26,15 @@ $mainRoutes->get("/", "controllers.main:showEnqueuePage")
 ->bind("index");
 
 /**
- *
+ * GET
+ * All jobs route
  */
 $mainRoutes->get("/list", "controllers.main:listAllJobs")
 ->bind("listAllJobs");
 
 /**
- *
+ * GET
+ * Single job details route
  */
 $mainRoutes->get("/job/{jobid}", "controllers.main:getJob")
 ->bind("getJob");

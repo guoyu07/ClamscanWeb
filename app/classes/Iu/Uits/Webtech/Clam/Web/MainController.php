@@ -48,7 +48,9 @@ class MainController
     }
     
     /**
+     * This function displays all jobs in the database
      *
+     * @return object A symfony response object containing the rendered template
      */
     public function listAllJobs()
     {
@@ -65,7 +67,10 @@ class MainController
     }
     
     /**
+     * This function displays a single job and all of it's details
      *
+     * @param int $jobid The id of the job requested
+     * @return object A symfony response object containing the rendered template
      */
     public function getJob($jobid)
     {

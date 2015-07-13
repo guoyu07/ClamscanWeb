@@ -22,7 +22,19 @@
         "user": "clamav",
         "password": "clamav",
         "host": "localhost",
-        "port": "3306",
+        "port": 3306,
         "dbname": "clamav"
+    },
+    "email": {
+        "host": "",
+        "port": 587,
+        "encryption": "tls",
+        "username": "",
+        "password": "",
+        "from": {
+            "name": "",
+            "address": ""
+        },
+        "templateCache": "/tmp/twig-cli"
     }
 }

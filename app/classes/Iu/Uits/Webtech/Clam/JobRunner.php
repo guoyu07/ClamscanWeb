@@ -1,6 +1,7 @@
 <?php
 /**
- *
+ * This file contains the Job Runner command class
+ * @license MIT
  */
 namespace Iu\Uits\Webtech\Clam;
 
@@ -16,15 +17,21 @@ use Rhumsaa\Uuid\Uuid;
 use Rhumsaa\Uuid\Exception\UnsatisfiedDependencyException;
 
 /**
+ * Job Runner command class
+ * This class will when executed run all the queued jobs in the database
  *
+ * @author Anthony Vitacco <avitacco@iu.edu>
  */
 class JobRunner extends Command
 {
     /** @var An instance of the dependency container */
     private $deps;
     
+    /** @var An instance of the Silex Application */
+    private $app;
+    
     /**
-     *
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -32,7 +39,7 @@ class JobRunner extends Command
     }
     
     /**
-     *
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -100,11 +107,35 @@ class JobRunner extends Command
             $em->persist($job);
             
             $em->flush();
+            
+            /**
+             * Send an email to the requested report address (if set)
+             */
+            if (!is_null($job->reportAddress)) {
+                $loader = new \Twig_Loader_Filesystem(__dir__ . "/../../../../../view");
+                $twig = new \Twig_Environment($loader, []);
+                
+                $reportJob = $job->toArray();
+                $reportResult = $result->toArray();
+                $reportJob["result"] = $reportResult;
+                
+                $mailConfig = $this->deps["configMain"]->email;
+                $message = \Swift_Message::newInstance()
+                ->setSubject("ClamScan results for {$job->username}")
+                ->setTo($job->reportAddress)
+                ->setFrom([$mailConfig->from->address => $mailConfig->from->name])
+                ->setBody($twig->render("email/scanResults.twig", ["job" => $reportJob]), "text/html");
+                $this->deps["mailer"]->send($message);
+            }
         }
     }
     
     /**
+     * Parse output function
+     * This function will parse the output from clamscan into a usable array
      *
+     * @param string $output The output from clamscan
+     * @return array The output parsed into an array
      */
     private function parseOutput($output)
     {
@@ -140,7 +171,9 @@ class JobRunner extends Command
     }
     
     /**
+     * Magic construct function
      *
+     * @param object $deps The pimple dependency container
      */
     public function __construct($deps)
     {

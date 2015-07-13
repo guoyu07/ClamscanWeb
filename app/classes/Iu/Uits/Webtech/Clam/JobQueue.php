@@ -87,7 +87,12 @@ class JobQueue
     }
     
     /**
+     * Get job by id
+     * This function returns a job as an array identified by it's id number,
+     * will contain the results as well if they're available.
      *
+     * @param int $id The ID in the database of the job requested
+     * @return array The job details requested
      */
     public function getJobById($id)
     {
@@ -101,15 +106,17 @@ class JobQueue
         $query = $em->createQuery($qb->getDql());
         $job = $query->getArrayResult()[0];
         
-        $resultsQb = $em->createQueryBuilder();
-        $resultsQb->select("r")
-        ->from("Iu\Uits\Webtech\Clam\Model\Result", "r")
-        ->where("r.id = '{$job["result"]}'");
-        
-        $resultQuery = $em->createQuery($resultsQb->getDql());
-        $result = $resultQuery->getArrayResult()[0];
-        
-        $job["result"] = $result;
+        if (!is_null($job["result"])) {
+            $resultsQb = $em->createQueryBuilder();
+            $resultsQb->select("r")
+            ->from("Iu\Uits\Webtech\Clam\Model\Result", "r")
+            ->where("r.id = '{$job["result"]}'");
+            
+            $resultQuery = $em->createQuery($resultsQb->getDql());
+            $result = $resultQuery->getArrayResult()[0];
+            
+            $job["result"] = $result;
+        }
         
         return $job;
     }

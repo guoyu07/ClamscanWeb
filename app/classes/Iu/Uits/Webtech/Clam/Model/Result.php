@@ -65,4 +65,23 @@ class Result
             return $this->$name;
         }
     }
+    
+    /**
+     * Return the private data in this object as an array
+     *
+     * @return array The private object properties as an array
+     */
+    public function toArray()
+    {
+        return [
+            "id" => $this->id,
+            "completedAt" => $this->completedAt,
+            "scannedDirectories" => $this->scannedDirectories,
+            "scannedFiles" => $this->scannedFiles,
+            "dataScanned" => $this->dataScanned,
+            "dataRead" => $this->dataRead,
+            "executionTime" => $this->executionTime,
+            "fileResults" => $this->fileResults,
+        ];
+    }
 }

@@ -64,4 +64,24 @@ class Job
             return $this->$name;
         }
     }
+    
+    /**
+     * Return the private data in this object as an array
+     *
+     * @return array The private object properties as an array
+     */
+    public function toArray()
+    {
+        return [
+            "id" => $this->id,
+            "addedAt" => $this->addedAt,
+            "addedBy" => $this->addedBy,
+            "state" => $this->state,
+            "username" => $this->username,
+            "reportAddress" => $this->reportAddress,
+            "excludeDirs" => $this->excludeDirs,
+            "excludeFiles" => $this->excludeFiles,
+            "result" => $this->result,
+        ];
+    }
 }
