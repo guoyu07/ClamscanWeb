@@ -6,7 +6,6 @@
 namespace Iu\Uits\Webtech\Clam\Web;
 
 use Iu\Uits\Webtech\Clam\JobQueue;
-use \Symfony\Component\HttpFoundation\Request;
 
 /**
  * Main Controller Class
