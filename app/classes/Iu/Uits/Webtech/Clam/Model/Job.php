@@ -5,45 +5,46 @@
  */
 namespace Iu\Uits\Webtech\Clam\Model;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * This class represents a job within the ClamScanWeb application
  * @author Anthony Vitacco <avitacco@iu.edu>
  *
- * @ORM\Entity
- * @ORM\Table(name="ClamScanJobs")
+ * @Entity
+ * @Table(name="ClamScanJobs")
  */
 class Job
 {
-    /** @ORM\Id @ORM\Column(type="integer") @ORM\GeneratedValue */
+    /**
+     * @Id
+     * @Column(type="integer")
+     * @GeneratedValue */
     private $id;
     
-    /** @ORM\Column(type="datetimetz") */
+    /** @Column(type="datetimetz") */
     private $addedAt;
     
-    /** @ORM\Column(type="string", length=8) */
+    /** @Column(type="string", length=8) */
     private $addedBy;
     
-    /** @ORM\Column(type="string", length=12) */
+    /** @Column(type="string", length=12) */
     private $state;
     
-    /** @ORM\Column(type="string", length=32) */
+    /** @Column(type="string", length=32) */
     private $username;
     
-    /** @ORM\Column(type="string", length=64) */
+    /** @Column(type="string", length=64) */
     private $reportAddress;
     
-    /** @ORM\Column(type="array") */
+    /** @Column(type="array") */
     private $excludeDirs;
     
-    /** @ORM\Column(type="array") */
+    /** @Column(type="array") */
     private $excludeFiles;
     
-    /** @ORM\Column(type="boolean") */
+    /** @Column(type="boolean") */
     private $logAllFiles = false;
     
-    /** @ORM\Column(type="guid", nullable=true) */
+    /** @Column(type="guid", nullable=true) */
     private $result;
     
     /**
