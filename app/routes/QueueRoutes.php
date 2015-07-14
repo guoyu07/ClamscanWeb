@@ -26,6 +26,17 @@ $queueRoutes->post("/add", "controllers.queue:add")
 ->bind("addJobToQueue");
 
 /**
+ *
+ */
+$queueRoutes->get(
+    "/jobs.json",
+    function(\Symfony\Component\HttpFoundation\Request $request) use ($app) {
+        $statuses = explode("|", $request->get("status"));
+        return $app->json($app["controllers.queue"]->getJobsByState($statuses));
+    })
+->bind("jobsWaitingAndRunning");
+
+/**
  * Mount the routes to the appropriate path
  */
 $app->mount("/queue", $queueRoutes);

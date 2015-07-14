@@ -50,6 +50,10 @@ class JobQueue
         $job->excludeDirs = explode(",", $request->get("excludeDirs"));
         $job->excludeFiles = explode(",", $request->get("excludeFiles"));
         
+        if($request->get("logAllFiles") == "on") {
+            $job->logAllFiles = true;
+        }
+        
         /**
          * Get an instance of the doctrine entity manager and use that to store
          * the job we just built
@@ -80,7 +84,8 @@ class JobQueue
             $state = filter_var($state, FILTER_SANITIZE_STRING);
             $qb->orWhere("j.state = '{$state}'");
         }
-        
+        $qb->setMaxResults(500);
+        $qb->orderBy("j.id", "DESC");
         $query = $em->createQuery($qb->getDql());
         $jobs = $query->getArrayResult();
         return $jobs;
