@@ -5,41 +5,43 @@
  */
 namespace Iu\Uits\Webtech\Clam\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * This class represents a result for a job executed by the ClamScanWeb
  * application.
  * @author Anthony Vitacco <avitacco@iu.edu>
  *
- * @Entity
- * @Table(name="ClamScanResults")
+ * @ORM\Entity
+ * @ORM\Table(name="ClamScanResults")
  */
 class Result
 {
-    /** @Id @Column(type="guid") */
+    /** @ORM\Id @ORM\Column(type="guid") */
     private $id;
     
-    /** @Column(type="datetimetz") */
+    /** @ORM\Column(type="datetimetz") */
     private $completedAt;
     
-    /** @Column(type="smallint", length=16) */
+    /** @ORM\Column(type="smallint", length=16, nullable=true) */
     private $scannedDirectories;
     
-    /** @Column(type="smallint", length=16) */
+    /** @ORM\Column(type="smallint", length=16, nullable=true) */
     private $scannedFiles;
     
-    /** @Column(type="smallint", length=8) */
+    /** @ORM\Column(type="smallint", length=8, nullable=true) */
     private $infectedFiles;
     
-    /** @Column(type="string") */
+    /** @ORM\Column(type="string", nullable=true) */
     private $dataScanned;
     
-    /** @Column(type="string") */
+    /** @ORM\Column(type="string", nullable=true) */
     private $dataRead;
     
-    /** @Column(type="string") */
+    /** @ORM\Column(type="string", nullable=true) */
     private $executionTime;
     
-    /** @Column(type="json_array") */
+    /** @ORM\Column(type="json_array", nullable=true) */
     private $fileResults;
     
     /**
