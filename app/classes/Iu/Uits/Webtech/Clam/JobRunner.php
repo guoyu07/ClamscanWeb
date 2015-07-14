@@ -27,9 +27,6 @@ class JobRunner extends Command
     /** @var An instance of the dependency container */
     private $deps;
     
-    /** @var An instance of the Silex Application */
-    private $app;
-    
     /**
      * @inheritdoc
      */
@@ -43,7 +40,6 @@ class JobRunner extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $formatter = $this->getHelperSet()->get("formatter");
         $em = $this->deps["entityManager"];
         
         $query = $em->createQuery("SELECT j from Iu\Uits\Webtech\Clam\Model\Job j where j.state = 'waiting'");
@@ -58,12 +54,36 @@ class JobRunner extends Command
             $em->persist($job);
             $em->flush();
             
-            $directory = $this->deps["configMain"]->command->paths->homeRoot;
+            $homeRoot = $this->deps["configMain"]->command->paths->homeRoot;
+            $directory = $homeRoot . "/" . $job->username;
+            
+            /**
+             * Build the command to run
+             */
+            $command = "clamscan --recursive=yes ";
+            
+            if (!$job->logAllFiles) {
+                $command .= " --infected ";
+            }
+            
+            $excludeDirs = implode(",", $job->excludeDirs);
+            if (strlen($excludeDirs)) {
+                $dirs = implode(",", $job->excludeDirs);
+                $command .= " --exclude-dir={$dirs} ";
+            }
+            
+            $excludeFiles = implode(",", $job->excludeFiles);
+            if (strlen($excludeFiles)) {
+                $files = implode(",", $job->excludeFiles);
+                $command .= " --exclude={$files} ";
+            }
+            
+            $command .= " {$directory}";
             
             /**
              * Run the actual clam scan
              */
-            $process = new Process("clamscan --recursive=yes {$directory}");
+            $process = new Process($command);
             $process->setTimeout(36000);
             $process->run();
             
