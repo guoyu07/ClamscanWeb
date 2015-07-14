@@ -1,4 +1,7 @@
 {
+    "name": "breaker1/ClamscanWeb",
+    "description": "A PHP/Javascript clam scan web interface.",
+    "license": "MIT",
     "autoload": {
         "psr-0": {
             "Iu\\": [
