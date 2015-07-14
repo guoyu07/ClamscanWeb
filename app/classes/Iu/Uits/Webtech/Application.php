@@ -6,9 +6,6 @@
  */
 namespace Iu\Uits\Webtech;
 
-use Silex\Application\TwigTrait;
-use Silex\Provider\UrlGeneratorServiceProvider;
-
 /**
  * This class extends the Silex Application class to add in a couple traits
  * which are too useful to ignore.
@@ -17,6 +14,9 @@ use Silex\Provider\UrlGeneratorServiceProvider;
  */
 class Application extends \Silex\Application
 {
+    use \Silex\Application\TwigTrait;
+    use \Silex\Application\UrlGeneratorTrait;
+    
     /**
      * The magic construct function
      */
