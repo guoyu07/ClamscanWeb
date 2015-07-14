@@ -1,5 +1,5 @@
 {
-    "name": "breaker1/ClamscanWeb",
+    "name": "breaker1/clamscan-web",
     "description": "A PHP/Javascript clam scan web interface.",
     "license": "MIT",
     "autoload": {
