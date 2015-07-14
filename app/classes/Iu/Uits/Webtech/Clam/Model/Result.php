@@ -80,6 +80,7 @@ class Result
             "completedAt" => $this->completedAt,
             "scannedDirectories" => $this->scannedDirectories,
             "scannedFiles" => $this->scannedFiles,
+            "infectedFiles" => $this->infectedFiles,
             "dataScanned" => $this->dataScanned,
             "dataRead" => $this->dataRead,
             "executionTime" => $this->executionTime,

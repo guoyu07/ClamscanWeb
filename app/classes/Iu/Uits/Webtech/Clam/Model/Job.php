@@ -86,6 +86,7 @@ class Job
             "reportAddress" => $this->reportAddress,
             "excludeDirs" => $this->excludeDirs,
             "excludeFiles" => $this->excludeFiles,
+            "logAllFiles" => $this->logAllFiles,
             "result" => $this->result,
         ];
     }
