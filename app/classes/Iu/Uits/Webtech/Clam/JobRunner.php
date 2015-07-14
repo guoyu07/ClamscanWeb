@@ -50,36 +50,10 @@ class JobRunner extends Command
             $em->persist($job);
             $em->flush();
             
-            $homeRoot = $this->deps["configMain"]->command->paths->homeRoot;
-            $directory = $homeRoot . "/" . $job->username;
-            
-            /**
-             * Build the command to run
-             */
-            $command = "clamscan --recursive=yes ";
-            
-            if (!$job->logAllFiles) {
-                $command .= " --infected ";
-            }
-            
-            $excludeDirs = implode(",", $job->excludeDirs);
-            if (strlen($excludeDirs)) {
-                $dirs = implode(",", $job->excludeDirs);
-                $command .= " --exclude-dir={$dirs} ";
-            }
-            
-            $excludeFiles = implode(",", $job->excludeFiles);
-            if (strlen($excludeFiles)) {
-                $files = implode(",", $job->excludeFiles);
-                $command .= " --exclude={$files} ";
-            }
-            
-            $command .= " {$directory}";
-            
             /**
              * Run the actual clam scan
              */
-            $process = new Process($command);
+            $process = new Process($this->buildJobCommand($job));
             $process->setTimeout(36000);
             $process->run();
             
@@ -128,20 +102,7 @@ class JobRunner extends Command
              * Send an email to the requested report address (if set)
              */
             if (!is_null($job->reportAddress)) {
-                $loader = new \Twig_Loader_Filesystem(__dir__ . "/../../../../../view");
-                $twig = new \Twig_Environment($loader, []);
-                
-                $reportJob = $job->toArray();
-                $reportResult = $result->toArray();
-                $reportJob["result"] = $reportResult;
-                
-                $mailConfig = $this->deps["configMain"]->email;
-                $message = \Swift_Message::newInstance()
-                ->setSubject("ClamScan results for {$job->username}")
-                ->setTo($job->reportAddress)
-                ->setFrom([$mailConfig->from->address => $mailConfig->from->name])
-                ->setBody($twig->render("email/scanResults.twig", ["job" => $reportJob]), "text/html");
-                $this->deps["mailer"]->send($message);
+                $this->sendEmailReport($job, $result);
             }
         }
     }
@@ -184,6 +145,64 @@ class JobRunner extends Command
             "files" => $files,
             "summary" => $summary
         ];
+    }
+    
+    /**
+     * Work out what the command to run should be based on the parameters in the
+     * job from the database.
+     *
+     * @param object $job The job model with data
+     * @return string The command to run
+     */
+    private function buildJobCommand($job)
+    {
+        $homeRoot = $this->deps["configMain"]->command->paths->homeRoot;
+        $directory = $homeRoot . "/" . $job->username;
+        
+        $command = "clamscan --recursive=yes ";
+            
+        if (!$job->logAllFiles) {
+            $command .= " --infected ";
+        }
+        
+        $excludeDirs = implode(",", $job->excludeDirs);
+        if (strlen($excludeDirs)) {
+            $dirs = implode(",", $job->excludeDirs);
+            $command .= " --exclude-dir={$dirs} ";
+        }
+        
+        $excludeFiles = implode(",", $job->excludeFiles);
+        if (strlen($excludeFiles)) {
+            $files = implode(",", $job->excludeFiles);
+            $command .= " --exclude={$files} ";
+        }
+        
+        $command .= " {$directory}";
+        return $command;
+    }
+    
+    /**
+     * Send an email report to the email address in the job
+     *
+     * @param object $job The job object
+     * @param object $result The result object
+     */
+    private function sendEmailReport($job, $result)
+    {
+        $loader = new \Twig_Loader_Filesystem(__dir__ . "/../../../../../view");
+        $twig = new \Twig_Environment($loader, []);
+        
+        $reportJob = $job->toArray();
+        $reportResult = $result->toArray();
+        $reportJob["result"] = $reportResult;
+        
+        $mailConfig = $this->deps["configMain"]->email;
+        $message = \Swift_Message::newInstance()
+        ->setSubject("ClamScan results for {$job->username}")
+        ->setTo($job->reportAddress)
+        ->setFrom([$mailConfig->from->address => $mailConfig->from->name])
+        ->setBody($twig->render("email/scanResults.twig", ["job" => $reportJob]), "text/html");
+        $this->deps["mailer"]->send($message);
     }
     
     /**
