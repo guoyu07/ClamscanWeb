@@ -48,7 +48,7 @@ class JobRunner extends Command
          */
         if (!$this->shouldRun($input->getOption("no-lock"))) {
             $output->writeLn("Error: There appears to be an instance of this script running already.");
-            exit(1);
+            return;
         }
         
         /**
