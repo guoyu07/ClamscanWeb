@@ -8,6 +8,7 @@ namespace Iu\Uits\Webtech\Clam;
 use Iu\Uits\Webtech\Clam\Model\Result;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Rhumsaa\Uuid\Uuid;
@@ -28,7 +29,13 @@ class JobRunner extends Command
      */
     protected function configure()
     {
-        $this->setName("jobs:run");
+        $this->setName("jobs:run")
+        ->addOption(
+            "no-lock",
+            "l",
+            InputOption::VALUE_NONE,
+            "If set, the task will ignore any other running instances"
+        );
     }
     
     /**
@@ -36,6 +43,21 @@ class JobRunner extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /**
+         * Check to see if this should run at all
+         */
+        if (!$this->shouldRun($input->getOption("no-lock"))) {
+            $output->writeLn("Error: There appears to be an instance of this script running already.");
+            exit(1);
+        }
+        
+        /**
+         * Add lock file if required
+         */
+        if (!$input->getOption("no-lock")) {
+            $this->setLockFile();
+        }
+        
         $em = $this->deps["entityManager"];
         
         $query = $em->createQuery("SELECT j from Iu\Uits\Webtech\Clam\Model\Job j where j.state = 'waiting'");
@@ -105,6 +127,53 @@ class JobRunner extends Command
                 $this->sendEmailReport($job, $result);
             }
         }
+        
+        /**
+         * Delete the lock file if required
+         */
+        if (!$input->getOption("no-lock")) {
+            $this->unsetLockFile();
+        }
+    }
+    
+    /**
+     * Check to see if this command should be run. It should be run if no lock
+     * is true or if the lock file doesn't exist.
+     *
+     * @param boolean $noLocking Whether there's an execution lock
+     * @return boolean Whether this command should execute
+     */
+    private function shouldRun($noLocking)
+    {
+        if ($noLocking) {
+            return true;
+        }
+        
+        if (!file_exists($this->deps["configMain"]->command->paths->lockFile)) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Creates the lock file which will contain the pid of the current exection
+     */
+    private function setLockFile()
+    {
+        $pid = getmypid();
+        file_put_contents(
+            $this->deps["configMain"]->command->paths->lockFile,
+            $pid
+        );
+    }
+    
+    /**
+     * Deletes the lock file
+     */
+    private function unsetLockFile()
+    {
+        unlink($this->deps["configMain"]->command->paths->lockFile);
     }
     
     /**
