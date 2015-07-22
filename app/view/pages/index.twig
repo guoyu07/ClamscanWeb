@@ -1,5 +1,10 @@
 {% extends "/layouts/" ~ layout ~ ".twig" %}
 
+{% block headTop %}
+    {{ parent() }}
+    <meta id="x-clamscan-jobs-url" content="{{ url("jobsWaitingAndRunning", {"status":"waiting|running"}) }}" />
+{% endblock %}
+
 {% block pageTitle %}ClamAV Web - Schedule a Scan{% endblock %}
 
 {% block content %}

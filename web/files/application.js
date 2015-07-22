@@ -3,7 +3,8 @@ String.prototype.capitalizeFirstLetter = function() {
 }
 
 function getRunningAndWaitingJobs() {
-    $.getJSON("/queue/jobs.json?status=waiting|running", function (jobs) {
+    var queryUrl = $("#x-clamscan-jobs-url").attr("content");
+    $.getJSON(queryUrl, function (jobs) {
         var newJobsHtml = "";
         jobs.forEach(function (job) {
             
@@ -27,5 +28,5 @@ function getRunningAndWaitingJobs() {
 
 $(document).ready(function (){
     getRunningAndWaitingJobs();
-    var tid = setInterval(getRunningAndWaitingJobs, 500);
+    var tid = setInterval(getRunningAndWaitingJobs, 5000);
 });
