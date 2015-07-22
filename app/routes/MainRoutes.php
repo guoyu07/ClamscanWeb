@@ -40,6 +40,14 @@ $mainRoutes->get("/job/{jobid}", "controllers.main:getJob")
 ->bind("getJob");
 
 /**
+ * GET
+ * This route just exists so that it's possible to use the url generator to
+ * generate urls for external resources such as javascript and css files
+ */
+$mainRoutes->get("/files", function() {})
+->bind("files");
+
+/**
  * Mount the routes to the appropriate path
  */
 $app->mount("/", $mainRoutes);
