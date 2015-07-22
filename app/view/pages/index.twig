@@ -63,19 +63,6 @@
             </div>
             <div class="panel-body">
                 <div id="jobs"></div>
-                {#
-                {% if waitAndRunJobs|length > 0 %}
-                    {% for job in waitAndRunJobs %}
-                        <p>
-                            <span class="label {% if job.state == "waiting" %}label-info{% else %}label-warning{% endif %}">{{ job.state|capitalize }}</span>
-                            <span>{{ job.username }}</span>
-                            <span>{{ job.addedAt|date }}</span>
-                        </p>
-                    {% endfor %}
-                {% else %}
-                    <p>Currently, there are no jobs waiting or running.</p>
-                {% endif %}
-                #}
                 <a href="{{ url("listAllJobs") }}" class="btn btn-default" role="button">
                     <span class="glyphicon glyphicon-eye-open"></span>
                     View all jobs
@@ -85,6 +72,6 @@
 {% endblock %}
 
 {% block extraJavascript %}
-    <script type="text/javascript" src="{{ url("index") }}/files/jquery-dateFormat.min.js"></script>
-    <script type="text/javascript" src="{{ url("index") }}/files/application.js"></script>
+    <script type="text/javascript" src="{{ url("files") }}/jquery-dateFormat.min.js"></script>
+    <script type="text/javascript" src="{{ url("files") }}/application.js"></script>
 {% endblock %}
