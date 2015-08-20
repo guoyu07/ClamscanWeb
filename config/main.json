@@ -1,0 +1,11 @@
+{
+    "mongodb": {
+        "server": [
+            "127.0.0.1:27017"
+        ],
+        "connectTimeoutMS": 1000,
+        "socketTimeoutMS": 1000,
+        "replicaSet": "",
+        "database": "clam"
+    }
+}

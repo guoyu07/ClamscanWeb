@@ -5,9 +5,9 @@ namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 Use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * @ODM\Document(collection="pools")
+ * @ODM\Document(collection="servers")
  */
-class Pool
+class Server
 {
     /** @ODM\Id */
     private $id;
@@ -15,8 +15,26 @@ class Pool
     /** @ODM\Field(type="string") */
     private $name;
     
-    /** @ODM\ReferenceMany(targetDocument="Server") */
-    private $servers = [];
+    /** @ODM\Field(type="string") */
+    private $address;
+    
+    /** @ODM\Field(type="int") */
+    private $port = 22;
+    
+    /** @ODM\Field(type="string") */
+    private $authMethod;
+    
+    /** @ODM\Field(type="string") */
+    private $username;
+    
+    /** @ODM\Field(type="string") */
+    private $password;
+    
+    /** @ODM\Field(type="string") */
+    private $publicKey;
+    
+    /** @ODM\Field(type="string") */
+    private $privateKey;
     
     /**
      * Get Id
@@ -47,23 +65,4 @@ class Pool
     {
         $this->name = $value;
     }
-    
-    /**
-     * Get Servers
-     *
-     * @return array The list of servers
-     */
-    public function getServers()
-    {
-        return $this->servers;
-    }
-    
-    /**
-     *
-     */
-    public function addServer($server)
-    {
-        $this->servers[] = $server;
-    }
-    
 }
