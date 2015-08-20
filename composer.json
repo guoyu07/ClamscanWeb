@@ -1,5 +1,5 @@
 {
-    "name": "breaker1/ClamscanWeb",
+    "name": "breaker1/clamscan-web",
     "description": "A web interface to manage ClamAV scans on networked servers",
     "license": "MIT",
     "autoload": {
