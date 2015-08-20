@@ -3,14 +3,14 @@
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
 /**
- * @Document(collection="pools")
+ * @mongodb:Document(collection="pools")
  */
 class Pool
 {
-    /** @Id */
+    /** @mongodb:Id */
     private $id;
     
-    /** @Field(type="string") */
+    /** @mongodb:Field(type="string") */
     private $name;
     
     /**
