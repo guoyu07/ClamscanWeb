@@ -1,6 +1,0 @@
-[submodule "app/resources/jquery-dateFormat"]
-	path = app/resources/jquery-dateFormat
-	url = https://github.com/phstc/jquery-dateFormat.git
-[submodule "app/resources/tablesorter"]
-	path = app/resources/tablesorter
-	url = https://github.com/Mottie/tablesorter.git
