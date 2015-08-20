@@ -1,0 +1,7 @@
+{
+    "require": {
+        "silex/silex": "~2@dev",
+        "doctrine/mongodb": "~1",
+        "doctrine/mongodb-odm": "~1"
+    }
+}
