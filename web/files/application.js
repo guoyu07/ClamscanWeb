@@ -21,7 +21,7 @@ function getRunningAndWaitingJobs() {
             newJobsHtml += " <span>" + $.format.date(job.addedAt.date, "MMMM d yyyy H:mm")+ "</span>";
             newJobsHtml += "</p>";
         });
-        //July 13, 2015 15:07
+        
         $("#jobs").html(newJobsHtml);
     });
 }

@@ -66,6 +66,24 @@ class MainController
     }
     
     /**
+     *
+     */
+    public function listMassScheduledJobs()
+    {
+        $queue = new JobQueue($this->app);
+        $jobs = $queue->getJobsByState(["waiting", "running", "failed", "finished"]);
+        
+        $options = $this->app["options"];
+        $options["jobs"] = $jobs;
+        $options["showMassScheduled"] = true;
+        
+        return $this->app["twig"]->render(
+            "pages/allJobsList.twig",
+            $options
+        );
+    }
+    
+    /**
      * This function displays a single job and all of it's details
      *
      * @param int $jobid The id of the job requested

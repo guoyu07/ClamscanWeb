@@ -33,6 +33,12 @@ $mainRoutes->get("/list", "controllers.main:listAllJobs")
 ->bind("listAllJobs");
 
 /**
+ *
+ */
+$mainRoutes->get("/listMassScheduledJobs", "controllers.main:listMassScheduledJobs")
+->bind("listMassScheduledJobs");
+
+/**
  * GET
  * Single job details route
  */

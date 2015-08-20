@@ -16,6 +16,8 @@ require(__dir__ . "/app/resources/dependencyContainer.php");
  * Declare the namespaces this script will use
  */
 use Iu\Uits\Webtech\Clam\JobRunner;
+use Iu\Uits\Webtech\Clam\ScheduleGroupScan;
+use Iu\Uits\Webtech\Clam\RunJobThreads;
 use Symfony\Component\Console\Application;
 
 /**
@@ -27,6 +29,16 @@ $application = new Application();
  * Add the job runner class to the application
  */
 $application->add(new JobRunner($deps));
+
+/**
+ * Add the Schedule Group Scan class to the application
+ */
+$application->add(new ScheduleGroupScan($deps));
+
+/**
+ * Add the Run Job Threads class to the application
+ */
+$application->add(new RunJobThreads($deps));
 
 /**
  * Run the application

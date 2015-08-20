@@ -32,7 +32,7 @@ class Job
     /** @Column(type="string", length=32) */
     private $username;
     
-    /** @Column(type="string", length=64) */
+    /** @Column(type="string", length=64, nullable=true) */
     private $reportAddress;
     
     /** @Column(type="array") */
@@ -44,8 +44,15 @@ class Job
     /** @Column(type="boolean") */
     private $logAllFiles = false;
     
-    /** @Column(type="guid", nullable=true) */
+    /**
+     * @Column(type="guid", nullable=true)
+     * @OneToOne(targetEntity="Result")
+     * @JoinColumn(name="result_id", referencedColumnName="id")
+     */
     private $result;
+    
+    /** @Column(type="boolean") */
+    private $massScheduled = false;
     
     /**
      * Magic set function, sets keys for this class

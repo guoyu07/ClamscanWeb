@@ -67,11 +67,16 @@
                 <h3 class="panel-title">Jobs: Waiting and Running</h3>
             </div>
             <div class="panel-body">
-                <div id="jobs"></div>
                 <a href="{{ url("listAllJobs") }}" class="btn btn-default" role="button">
                     <span class="glyphicon glyphicon-eye-open"></span>
-                    View all jobs
+                    View manually scheduled jobs
                 </a>
+                <a href="{{ url("listMassScheduledJobs") }}" class="btn btn-default" role="button">
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                    View mass scheduled jobs
+                </a>
+                <div>&nbsp;</div>
+                <div id="jobs"></div>
             </div>
         </div>        
 {% endblock %}

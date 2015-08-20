@@ -30,12 +30,12 @@ class JobRunner extends Command
     protected function configure()
     {
         $this->setName("jobs:run")
-        ->setDescription("Run all waiting jobs")
+        ->setDescription("Run a waiting job")
         ->addOption(
-            "lock",
-            "l",
-            InputOption::VALUE_NONE,
-            "If set, the task will run and check to see if there are any existing locked processes to avoid running multiple processes"
+            "job",
+            "j",
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            "The id of the job to run"
         );
     }
     
@@ -44,136 +44,131 @@ class JobRunner extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /**
-         * Check to see if this should run at all
-         */
-        if (!$this->shouldRun($input->getOption("lock"))) {
-            $output->writeLn("Error: There appears to be an instance of this script running already.");
-            return;
-        }
-        
-        /**
-         * Add lock file if required
-         */
-        if ($input->getOption("lock")) {
-            $this->setLockFile();
-        }
-        
         $em = $this->deps["entityManager"];
-        
-        $query = $em->createQuery("SELECT j from Iu\Uits\Webtech\Clam\Model\Job j where j.state = 'waiting'");
-        $query->setMaxResults(1);
+        foreach ($input->getOption("job") as $id) {
+            /**
+             * Pick up the specified job, make sure it's current state is
+             * "waiting", and mark it as running.
+             */
+            $job = $this->getJobFromDatabase($id);
+            
+            if ($job->state == "waiting") {
+                $job->state = "running";
+                $em->persist($job);
+                $em->flush();
+                
+                /**
+                 * Run the job and use the output to build a result object
+                 * to store in the database
+                 */
+                $commandOutput = $this->runCommand($job, $output);
+                $result = $this->buildResultObject(
+                    $this->parseOutput($commandOutput)
+                );
+                
+                /**
+                 * Link the result to our job and store both in the database
+                 */
+                $job->result = $result->id;
+                $job->state = "finished";
+                $em->persist($job);
+                $em->persist($result);
+                $em->flush();
+                
+                /**
+                 * Send an email report if the job was manually scheduled and has an
+                 * address to send the report in the job
+                 */
+                if (!$job->massScheduled && $job->reportAddress != "") {
+                    $this->sendEmailReport($job, $result);
+                }
+            } else {
+                if (!$output->isQuiet()) {
+                    $output->writeln("<error>Job {$id} is either already running or finished</error>");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fetch a specific job from the database
+     *
+     * @param string $id The id of the job to fetch from the database
+     * @return object The requested job object
+     */
+    private function getJobFromDatabase($id)
+    {
+        $em = $this->deps["entityManager"];
+        $query = $em->createQuery("SELECT j from Iu\Uits\Webtech\Clam\Model\Job j where j.id = :id");
+        $query->setParameters(["id" => $id]);
         $job = $query->getSingleResult();
+        return $job;
+    }
+    
+    /**
+     * Work out what the command to run should be based on the parameters in the
+     * job from the database.
+     *
+     * @param object $job The job model with data
+     * @return string The command to run
+     */
+    private function buildJobCommand($job)
+    {
+        $homeRoot = $this->deps["configMain"]->command->paths->homeRoot;
+        $directory = $homeRoot . "/" . $job->username;
         
-        /**
-         * Set the job state to running so that no other processes try to run
-         * this same job
-         */
-        $job->state = "running";
-        $em->persist($job);
-        $em->flush();
+        $command = "clamscan --recursive=yes ";
+            
+        if (!$job->logAllFiles) {
+            $command .= " --infected ";
+        }
         
-        /**
-         * Run the actual clam scan
-         */
+        $excludeDirs = implode(",", $job->excludeDirs);
+        if (strlen($excludeDirs)) {
+            $dirs = implode(",", $job->excludeDirs);
+            $command .= " --exclude-dir={$dirs} ";
+        }
+        
+        $excludeFiles = implode(",", $job->excludeFiles);
+        if (strlen($excludeFiles)) {
+            $files = implode(",", $job->excludeFiles);
+            $command .= " --exclude={$files} ";
+        }
+        
+        $command .= " {$directory}";
+        return $command;
+    }
+    
+    /**
+     * Run the command for the job
+     *
+     * @param object $job The job object
+     * @param object $output The output interface from the execute function
+     * @return string The output from the command
+     */
+    private function runCommand($job, $output)
+    {
         $process = new Process($this->buildJobCommand($job));
         $process->setTimeout(36000);
-        $process->run();
         
-        /**
-         * Figure out if the program finished correctly and set the state
-         * accordingly.
-         * If it's not 0 it screwed up
-         */
-        if ($process->isSuccessful()) {
-            $job->state = "finished";
+        if ($output->isDebug()) {
+            $output->writeln("<info>{$process->getCommandLine()}</info>");
+        }
+        
+        $process->start();
+        
+        if ($output->isDebug()) {
+            $process->wait(function ($type, $message) use ($output) {
+                if ($type == "err") {
+                    $message = "<error>{$message}</error>";
+                }
+                $output->writeln($message);
+            });
         } else {
-            $job->state = "failed";
-        }
-        $em->persist($job);
-        $em->flush();
-        
-        /**
-         * Parse the results into something useful
-         */
-        $results = $this->parseOutput($process->getOutput());
-        
-        /**
-         * Create and store the results in the database
-         */
-        $result = new Result();
-        $result->id = Uuid::uuid1();
-        $result->completedAt = new \DateTime("now", $this->deps["timezone"]);
-        $result->scannedDirectories = $results["summary"]["Scanned directories"];
-        $result->scannedFiles = $results["summary"]["Scanned files"];
-        $result->infectedFiles = $results["summary"]["Infected files"];
-        $result->dataScanned = $results["summary"]["Data scanned"];
-        $result->dataRead = $results["summary"]["Data read"];
-        $result->executionTime = $results["summary"]["Time"];
-        $result->fileResults = $results["files"];
-        $em->persist($result);
-            
-        /**
-         * Add the resultId to the job entry
-         */
-        $job->result = $result->id;
-        $em->persist($job);
-        
-        $em->flush();
-            
-        /**
-         * Send an email to the requested report address (if set)
-         */
-        if (!is_null($job->reportAddress) && !$job->massScheduled) {
-            $this->sendEmailReport($job, $result);
+            $process->wait();
         }
         
-        /**
-         * Delete the lock file if required
-         */
-        if ($input->getOption("lock")) {
-            $this->unsetLockFile();
-        }
-    }
-    
-    /**
-     * Check to see if this command should be run. It should be run if no lock
-     * is true or if the lock file doesn't exist.
-     *
-     * @param boolean $noLocking Whether there's an execution lock
-     * @return boolean Whether this command should execute
-     */
-    private function shouldRun($locking)
-    {
-        if (!$locking) {
-            return true;
-        }
-        
-        if (!file_exists($this->deps["configMain"]->command->paths->lockFile)) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Creates the lock file which will contain the pid of the current exection
-     */
-    private function setLockFile()
-    {
-        $pid = getmypid();
-        file_put_contents(
-            $this->deps["configMain"]->command->paths->lockFile,
-            $pid
-        );
-    }
-    
-    /**
-     * Deletes the lock file
-     */
-    private function unsetLockFile()
-    {
-        unlink($this->deps["configMain"]->command->paths->lockFile);
+        return $process->getOutput();
     }
     
     /**
@@ -217,37 +212,25 @@ class JobRunner extends Command
     }
     
     /**
-     * Work out what the command to run should be based on the parameters in the
-     * job from the database.
+     * Build a result object out of the results array produced by the
+     * parseOutput function
      *
-     * @param object $job The job model with data
-     * @return string The command to run
+     * @param array $results The results array
+     * @return object The result object containing the values from the input
      */
-    private function buildJobCommand($job)
+    private function buildResultObject($results)
     {
-        $homeRoot = $this->deps["configMain"]->command->paths->homeRoot;
-        $directory = $homeRoot . "/" . $job->username;
-        
-        $command = "clamscan --recursive=yes ";
-            
-        if (!$job->logAllFiles) {
-            $command .= " --infected ";
-        }
-        
-        $excludeDirs = implode(",", $job->excludeDirs);
-        if (strlen($excludeDirs)) {
-            $dirs = implode(",", $job->excludeDirs);
-            $command .= " --exclude-dir={$dirs} ";
-        }
-        
-        $excludeFiles = implode(",", $job->excludeFiles);
-        if (strlen($excludeFiles)) {
-            $files = implode(",", $job->excludeFiles);
-            $command .= " --exclude={$files} ";
-        }
-        
-        $command .= " {$directory}";
-        return $command;
+        $result = new Result();
+        $result->id = Uuid::uuid1();
+        $result->completedAt = new \DateTime("now", $this->deps["timezone"]);
+        $result->scannedDirectories = $results["summary"]["Scanned directories"];
+        $result->scannedFiles = $results["summary"]["Scanned files"];
+        $result->infectedFiles = $results["summary"]["Infected files"];
+        $result->dataScanned = $results["summary"]["Data scanned"];
+        $result->dataRead = $results["summary"]["Data read"];
+        $result->executionTime = $results["summary"]["Time"];
+        $result->fileResults = $results["files"];
+        return $result;
     }
     
     /**

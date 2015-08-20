@@ -21,7 +21,8 @@
         "ramsey/uuid": "^2.8",
         "twbs/bootstrap": "^3.3",
         "components/jquery": "^2.1",
-        "swiftmailer/swiftmailer": "^5.4"
+        "swiftmailer/swiftmailer": "^5.4",
+        "breaker1/passwd": "~1"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.3"

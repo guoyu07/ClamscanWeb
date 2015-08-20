@@ -77,7 +77,7 @@ class JobQueue
     {
         $em = $this->app["deps"]["entityManager"];
         $qb = $em->createQueryBuilder();
-        $qb->select("j")
+        $qb->select("j.id")
         ->from("Iu\Uits\Webtech\Clam\Model\Job", "j");
         
         foreach ($states as $state) {
@@ -88,7 +88,13 @@ class JobQueue
         $qb->orderBy("j.id", "DESC");
         $query = $em->createQuery($qb->getDql());
         $jobs = $query->getArrayResult();
-        return $jobs;
+        
+        $return = [];
+        foreach ($jobs as $job) {
+            $return [] = $this->getJobById($job["id"]);
+        }
+        
+        return $return;
     }
     
     /**
