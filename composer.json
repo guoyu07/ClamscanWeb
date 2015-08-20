@@ -1,4 +1,14 @@
 {
+    "name": "breaker1/ClamscanWeb",
+    "description": "A web interface to manage ClamAV scans on networked servers",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Iu\\Uits\\Webtech\\ClamScanWeb\\Models\\": [
+                "app/model"
+            ]
+        }
+    },
     "require": {
         "silex/silex": "~2@dev",
         "doctrine/mongodb": "~1",
