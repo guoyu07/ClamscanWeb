@@ -7,7 +7,7 @@ Use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /**
  * @ODM\Document(collection="pools")
  */
-class Pool
+class Pool implements \JsonSerializable
 {
     /** @ODM\Id */
     private $id;
@@ -15,7 +15,7 @@ class Pool
     /** @ODM\Field(type="string") */
     private $name;
     
-    /** @ODM\ReferenceMany(targetDocument="Server") */
+    /** @ODM\ReferenceMany(targetDocument="Server", cascade={"all"}) */
     private $servers = [];
     
     /**
@@ -59,11 +59,36 @@ class Pool
     }
     
     /**
+     * Add a server
      *
+     * @param object $server The server object
      */
     public function addServer($server)
     {
         $this->servers[] = $server;
     }
     
+    /**
+     * This function returns all the class scope variables as an array
+     *
+     * @return array The pool information as an array
+     */
+    public function toArray()
+    {
+        return [
+            "id" => $this->id,
+            "name" => $this->name,
+            "servers" => $this->servers
+        ];
+    }
+    
+    /**
+     * This function is called magically when this class is json_serialize'd
+     *
+     * @return array The information we want serialized
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
 }

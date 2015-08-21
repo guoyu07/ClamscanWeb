@@ -63,7 +63,7 @@ $deps["mongoDm"] = function ($c) {
     $config->setHydratorNamespace("Hydrators");
     $config->setDefaultDB($c["config"]->mongodb->database);
     $config->setMetadataDriverImpl(
-        Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::create(__dir__ . "/app/model")
+        Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::create(__dir__ . "/app/models")
     );
     Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
     
