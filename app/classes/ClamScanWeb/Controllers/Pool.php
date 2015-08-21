@@ -23,9 +23,6 @@ class Pool
     /** @var object The application object */
     private $app;
     
-    /** @var object The Collection+JSON object */
-    private $collection;
-    
     /**
      * Magic constructor function
      *
@@ -77,7 +74,7 @@ class Pool
         /**
          * We were given a bad pool id to look up
          */
-        if ($pool == null) {
+        if (is_null($pool)) {
             $collection->setError(new Collection\Error(
                 "Unknown Pool Id",
                 404,
@@ -105,7 +102,7 @@ class Pool
          * Json decode returned null which probably means we were sent invalid
          * json input
          */
-        if ($vars === null) {
+        if (is_null($vars)) {
             $collection->setError(new Collection\Error(
                 "Malformed Request",
                 400,
@@ -166,7 +163,7 @@ class Pool
         /**
          * We were given a bad pool id to look up
          */
-        if ($pool == null) {
+        if (is_null($pool)) {
             $collection = new Collection($this->url("deletePool", ["poolId" => $poolId]));
             $collection->setError(new Collection\Error(
                 "Unknown Pool Id",
@@ -192,7 +189,7 @@ class Pool
         /**
          * We were given a bad pool id to look up
          */
-        if ($pool == null) {
+        if (is_null($pool)) {
             $collection = new Collection($this->url("deletePool", ["poolId" => $poolId]));
             $collection->setError(new Collection\Error(
                 "Unknown Pool Id",
@@ -256,7 +253,7 @@ class Pool
      * @param object $pool The pool class
      * @return object A collection item instance
      */
-    private function createPoolItem($pool)
+    private function createPoolItem(PoolModel $pool)
     {
         $item = new Collection\Item(
             $this->url("getPool", ["poolId" => $pool->getId()])
