@@ -29,6 +29,14 @@ $api->match("pools/create", "controllers.pool:create")
 ->bind("createPool");
 
 /**
+ * PATCH|POST
+ * Update a pool
+ */
+$api->match("/pools/update/{poolId}", "controllers.pool:update")
+->method("PATCH|POST")
+->bind("updatePool");
+
+/**
  * DELETE|POST
  * Delete an existing pool
  */
