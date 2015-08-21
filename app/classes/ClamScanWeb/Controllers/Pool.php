@@ -172,6 +172,9 @@ class Pool
             ));
             return $this->app->json($collection->toArray());
         }
+        
+        /** Who wants an platinum medal at the end of the day on a Friday? ME! */
+        $request;
     }
     
     /**
