@@ -31,8 +31,6 @@ class Pool
     public function __construct($app)
     {
         $this->app = $app;
-        
-
     }
     
     /**
@@ -54,11 +52,15 @@ class Pool
             $collection->addItem($this->createPoolItem($pool));
         }
 
-        return $this->app->json($collection->toArray());
+        return $this->app->json(
+            $collection->toArray(),
+            200,
+            ["Content-Type" => "application/vnd.collection+json"]
+        );
     }
     
     /**
-     * Get a specific server by it's id
+     * Get a specific pool by its id
      *
      * @param string $poolId The ID of the pool to get
      * @return object A symfony response object
@@ -80,11 +82,19 @@ class Pool
                 404,
                 "The given pool was not found"
             ));
-            return $this->app->json($collection->toArray());
+            return $this->app->json(
+                $collection->toArray(),
+                404,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
         }
         
         $collection->addItem($this->createPoolItem($pool));
-        return $this->app->json($collection->toArray());
+        return $this->app->json(
+            $collection->toArray(),
+            200,
+            ["Content-Type" => "application/vnd.collection+json"]
+        );
     }
     
     /**
@@ -95,32 +105,43 @@ class Pool
      */
     public function create(Request $request)
     {
-        $vars = json_decode($request->getContent());
-        $collection = new Collection($this->url("createPool"));
+        $input = json_decode($request->getContent());
         
         /**
-         * Json decode returned null which probably means we were sent invalid
-         * json input
+         * If we're unable to get the name data element from the request input
+         * that means we were given a bad collection+json
          */
-        if (is_null($vars)) {
+        if (!$this->getData("name", $input)) {
+            $collection = new Collection($this->url("createPool"));
             $collection->setError(new Collection\Error(
                 "Malformed Request",
                 400,
                 "The json input was malformed"
             ));
-            return $this->app->json($collection->toArray());
+            return $this->app->json(
+                $collection->toArray(),
+                400,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
         }
+        
+        $name = $this->getData("name", $input)["value"];
         
         /**
          * Having pools with duplicate names is undesirable
          */
-        if ($this->exists("name", $vars->name)) {
+        if ($this->exists("name", $name)) {
+            $collection = new Collection($this->url("createPool"));
             $collection->setError(new Collection\Error(
                 "Pool Exists",
                 409,
                 "A pool by that name already exists"
             ));
-            return $this->app->json($collection->toArray());
+            return $this->app->json(
+                $collection->toArray(),
+                409,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
         }
         
         /**
@@ -128,7 +149,7 @@ class Pool
          * requested pool
          */
         $pool = new PoolModel();
-        $pool->setName($vars->name);
+        $pool->setName($name);
         
         $dm = $this->app["deps"]["mongoDm"];
         $dm->persist($pool);
@@ -159,6 +180,7 @@ class Pool
         $dm = $this->app["deps"]["mongoDm"];
         $pool = $dm->getRepository("Iu\Uits\Webtech\ClamScanWeb\Models\Pool")
         ->findOneBy(["id" => $poolId]);
+        $input = json_decode($request->getContent());
         
         /**
          * We were given a bad pool id to look up
@@ -170,11 +192,73 @@ class Pool
                 404,
                 "The given pool was not found"
             ));
-            return $this->app->json($collection->toArray());
+            return $this->app->json(
+                $collection->toArray(),
+                404,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
         }
         
-        /** Who wants an platinum medal at the end of the day on a Friday? ME! */
-        $request;
+        /**
+         * If we're unable to get the name data element from the request input
+         * that means we were given a bad collection+json
+         */
+        if (!$this->getData("name", $input)) {
+            $collection = new Collection($this->url("createPool"));
+            $collection->setError(new Collection\Error(
+                "Malformed Request",
+                400,
+                "The json input was malformed"
+            ));
+            return $this->app->json(
+                $collection->toArray(),
+                400,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
+        }
+        
+        $name = $this->getData("name", $input)["value"];
+        
+        /**
+         * Having pools with duplicate names is undesirable
+         */
+        if ($this->exists("name", $name)) {
+            $collection = new Collection($this->url("createPool"));
+            $collection->setError(new Collection\Error(
+                "Pool Exists",
+                409,
+                "A pool by that name already exists"
+            ));
+            return $this->app->json(
+                $collection->toArray(),
+                409,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
+        }
+        
+        /**
+         * Set the name of the pool
+         */
+        $pool->setName($name);
+        
+        /**
+         * Handle addition/removal of servers
+         */
+        if ($servers = $this->getData("servers", $input)) {
+            /** This has to wait for servers */
+        }
+        
+        $dm->persist($pool);
+        $dm->flush();
+        
+        /**
+         * Send the response back out
+         */
+        $response = new Response(
+            "",
+            200
+        );
+        return $response;
     }
     
     /**
@@ -199,7 +283,11 @@ class Pool
                 404,
                 "The given pool was not found"
             ));
-            return $this->app->json($collection->toArray());
+            return $this->app->json(
+                $collection->toArray(),
+                404,
+                ["Content-Type" => "application/vnd.collection+json"]
+            );
         }
         
         /**
@@ -268,5 +356,40 @@ class Pool
         }
         
         return $item;
+    }
+    
+    /**
+     * This function gets data from the data array of the submission
+     *
+     * @param string $name The name of the data to get
+     * @param mixed $input The collection from which to get the data
+     * @return mixed The requested data or false on failure
+     */
+    private function getData($name, $input)
+    {
+        /**
+         * Since we're using array_ functions, the data we're using needs to be an
+         * array too
+         */
+        if (is_object($input)) {
+            $input = json_decode(json_encode($input), true);
+        }
+        
+        /**
+         * The data was formatted incorrectly when it was sent in or didn't
+         * include the right stuff
+         */
+        if (!isset($input["template"]["data"])) {
+            return false;
+        }
+        
+       $dataItems = $input["template"]["data"];
+       $key = array_search($name, array_column($dataItems, "name"));
+       
+       if ($key !== false) {
+           return $dataItems[$key];
+       }
+       
+       return false;
     }
 }
