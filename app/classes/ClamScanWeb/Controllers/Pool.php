@@ -112,17 +112,7 @@ class Pool
          * that means we were given a bad collection+json
          */
         if (!$this->getData("name", $input)) {
-            $collection = new Collection($this->url("createPool"));
-            $collection->setError(new Collection\Error(
-                "Malformed Request",
-                400,
-                "The json input was malformed"
-            ));
-            return $this->app->json(
-                $collection->toArray(),
-                400,
-                ["Content-Type" => "application/vnd.collection+json"]
-            );
+            return $this->badRequestError($this->url("createPool"));
         }
         
         $name = $this->getData("name", $input)["value"];
@@ -131,17 +121,7 @@ class Pool
          * Having pools with duplicate names is undesirable
          */
         if ($this->exists("name", $name)) {
-            $collection = new Collection($this->url("createPool"));
-            $collection->setError(new Collection\Error(
-                "Pool Exists",
-                409,
-                "A pool by that name already exists"
-            ));
-            return $this->app->json(
-                $collection->toArray(),
-                409,
-                ["Content-Type" => "application/vnd.collection+json"]
-            );
+            $this->poolExistsError($this->url("createPool"));
         }
         
         /**
@@ -186,7 +166,7 @@ class Pool
          * We were given a bad pool id to look up
          */
         if (is_null($pool)) {
-            $collection = new Collection($this->url("deletePool", ["poolId" => $poolId]));
+            $collection = new Collection($this->url("updatePool", ["poolId" => $poolId]));
             $collection->setError(new Collection\Error(
                 "Unknown Pool Id",
                 404,
@@ -204,17 +184,7 @@ class Pool
          * that means we were given a bad collection+json
          */
         if (!$this->getData("name", $input)) {
-            $collection = new Collection($this->url("createPool"));
-            $collection->setError(new Collection\Error(
-                "Malformed Request",
-                400,
-                "The json input was malformed"
-            ));
-            return $this->app->json(
-                $collection->toArray(),
-                400,
-                ["Content-Type" => "application/vnd.collection+json"]
-            );
+            $this->badRequestError($this->url("updatePool"));
         }
         
         $name = $this->getData("name", $input)["value"];
@@ -223,17 +193,7 @@ class Pool
          * Having pools with duplicate names is undesirable
          */
         if ($this->exists("name", $name)) {
-            $collection = new Collection($this->url("createPool"));
-            $collection->setError(new Collection\Error(
-                "Pool Exists",
-                409,
-                "A pool by that name already exists"
-            ));
-            return $this->app->json(
-                $collection->toArray(),
-                409,
-                ["Content-Type" => "application/vnd.collection+json"]
-            );
+            $this->poolExistsError($this->url("updatePool"));
         }
         
         /**
@@ -391,5 +351,49 @@ class Pool
        }
        
        return false;
+    }
+    
+    /**
+     * This function return a collection with the correct error for a malformed
+     * request.
+     *
+     * @param strong $url The "current" url
+     * @return object A symfony response object
+     */
+    private function badRequestError($url)
+    {
+        $collection = new Collection($url);
+        $collection->setError(new Collection\Error(
+            "Malformed Request",
+            400,
+            "The json input was malformed"
+        ));
+        return $this->app->json(
+            $collection->toArray(),
+            400,
+            ["Content-Type" => "application/vnd.collection+json"]
+        );
+    }
+    
+    /**
+     * This function returns a collection with the correct error for a duplicate
+     * pool name.
+     *
+     * @param string $url The "current" url
+     * @return object A symfony response object
+     */
+    private function poolExistsError($url)
+    {
+        $collection = new Collection($url);
+        $collection->setError(new Collection\Error(
+            "Pool Exists",
+            409,
+            "A pool by that name already exists"
+        ));
+        return $this->app->json(
+            $collection->toArray(),
+            409,
+            ["Content-Type" => "application/vnd.collection+json"]
+        );
     }
 }
