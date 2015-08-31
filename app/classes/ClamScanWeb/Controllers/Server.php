@@ -311,22 +311,6 @@ class Server
     }
     
     /**
-     * Check to see if a server exists already with a field set to a specific
-     * value
-     *
-     * @param string $field The name of the field
-     * @param string $value The value of the field
-     */
-    private function exists($field, $value)
-    {
-        $dm = $this->app["deps"]["mongoDm"];
-        $results = $dm->getRepository("Iu\Uits\Webtech\ClamScanWeb\Models\Server")
-        ->findOneBy([$field => $value]);
-        
-        return (boolean)count($results);
-    }
-    
-    /**
      * The symfony url generator is nice and very convenient, but it's also
      * sometimes a bit long-winded to use
      *
