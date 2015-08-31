@@ -199,6 +199,26 @@ class Server implements \JsonSerializable
     /**
      *
      */
+    public function getPrompt($field)
+    {
+        $prompts = [
+            "id" => "",
+            "name" => "Name",
+            "address" => "Address",
+            "port" => "Port (default: 22)",
+            "authMethod" => "Authentication Method",
+            "username" => "Username",
+            "password" => "Password",
+            "publicKey" => "Public Key",
+            "privateKey" => "Private Key"
+        ];
+        
+        return $prompts[$field];
+    }
+    
+    /**
+     *
+     */
     public function jsonSerialize()
     {
         return $this->toArray();
