@@ -244,9 +244,9 @@ class Pool
         /**
          * Handle addition/removal of servers
          */
-        if ($servers = $this->getData("servers", $input)) {
-            /** This has to wait for servers */
-        }
+        //if ($servers = $this->getData("servers", $input)) {
+        //    /** This has to wait for servers */
+        //}
         
         $dm->persist($pool);
         $dm->flush();
