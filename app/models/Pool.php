@@ -2,7 +2,7 @@
 
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
-Use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
  * @ODM\Document(collection="pools")
@@ -69,6 +69,26 @@ class Pool implements \JsonSerializable
     }
     
     /**
+     * Remove a server
+     *
+     * @param object $server The server object
+     */
+    public function removeServer($server)
+    {
+        /** Maybe this isn't needed? */
+    }
+    
+    /**
+     * Set the servers array
+     *
+     * @param array $servers An array of server objects
+     */
+    public function setServers(array $servers)
+    {
+        $this->servers = $servers;
+    }
+    
+    /**
      * This function returns all the class scope variables as an array
      *
      * @return array The pool information as an array
@@ -80,6 +100,23 @@ class Pool implements \JsonSerializable
             "name" => $this->name,
             "servers" => $this->servers
         ];
+    }
+    
+    /**
+     * This function returns the prompt for a given field
+     *
+     * @param string $field The field
+     * @return string The prompt
+     */
+    public function getPrompt($field)
+    {
+        $prompts = [
+            "id" => "Id",
+            "name" => "Name",
+            "servers" => "Servers",
+        ];
+        
+        return $prompts[$field];
     }
     
     /**
