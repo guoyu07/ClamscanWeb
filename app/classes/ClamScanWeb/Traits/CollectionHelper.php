@@ -6,6 +6,8 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Traits;
 
+use CollectionJson\Collection;
+
 /**
  * This trait provides some useful helper classes for dealing with collection
  * objects
@@ -22,7 +24,7 @@ trait CollectionHelper
      * @param int The status code to send (default: 200)
      * @return object A symfony response object
      */
-    private function outputCollection(\CollectionJson\Collection $collection, $code = 200)
+    private function outputCollection(Collection $collection, $code = 200)
     {
         return $this->app->json(
             $collection->toArray(),
@@ -103,7 +105,7 @@ trait CollectionHelper
      * @param object $e The exception
      * @return object A symfony response instance
      */
-    private function handleException($e)
+    private function handleException(RuntimeException $e)
     {
         $collection = new Collection($this->url("createPool"));
         switch ($e->getCode()) {
