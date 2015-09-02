@@ -105,7 +105,7 @@ trait CollectionHelper
      * @param object $e The exception
      * @return object A symfony response instance
      */
-    private function handleException(RuntimeException $e)
+    private function handleException(\RuntimeException $e)
     {
         $collection = new Collection($this->url("createPool"));
         switch ($e->getCode()) {
