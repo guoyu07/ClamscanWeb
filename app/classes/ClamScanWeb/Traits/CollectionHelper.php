@@ -94,4 +94,49 @@ trait CollectionHelper
         }
         return $output;
     }
+    
+    /**
+     * Since the code for handling exceptions is pretty much the same regardless
+     * of what function being run, it's easiest to just have all of it in a
+     * function
+     *
+     * @param object $e The exception
+     * @return object A symfony response instance
+     */
+    private function handleException($e)
+    {
+        $collection = new Collection($this->url("createPool"));
+        switch ($e->getCode()) {
+            case 400:
+                $error =  new Collection\Error(
+                    "Malformed Request",
+                    400,
+                    "The request contained invalid collection+json"
+                );
+                break;
+            case 404:
+                $error = new Collection\Error(
+                    "Not Found",
+                    404,
+                    "The requested item was not found"
+                );
+                break;
+            case 409:
+                $error = new Collection\Error(
+                    "Conflict",
+                    409,
+                    "An item with that name already exists"
+                );
+                break;
+            default:
+                $error = new Collection\Error(
+                    "Unknown Error",
+                    999,
+                    "An unknown error has occurred"
+                );
+                break;
+        }
+        $collection->setError($error);
+        return $this->outputCollection($collection, $e->getCode());
+    }
 }
