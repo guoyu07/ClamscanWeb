@@ -22,7 +22,7 @@ trait CollectionHelper
      * @param int The status code to send (default: 200)
      * @return object A symfony response object
      */
-    private function outputCollection($collection, $code = 200)
+    private function outputCollection(\CollectionJson\Collection $collection, $code = 200)
     {
         return $this->app->json(
             $collection->toArray(),

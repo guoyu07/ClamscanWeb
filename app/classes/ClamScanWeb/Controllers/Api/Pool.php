@@ -22,9 +22,6 @@ class Pool extends PoolController
     /** Use the CollectionHelper trait */
     use \Iu\Uits\Webtech\ClamScanWeb\Traits\CollectionHelper;
     
-    /** @var object The silex application instance */
-    private $app;
-    
     /**
      * Magic constructor function
      *
