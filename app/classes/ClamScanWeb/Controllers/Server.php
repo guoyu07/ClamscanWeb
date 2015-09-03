@@ -193,5 +193,4 @@ class Server
         
         return (boolean)count($results);
     }
-    
 }
