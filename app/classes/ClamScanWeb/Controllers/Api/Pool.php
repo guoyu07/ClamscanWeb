@@ -43,9 +43,12 @@ class Pool extends PoolController
         $collection = new Collection(
             $this->url("poolsBillboard")
         );
-        $collection->addLink($this->listLink());
-        $collection->addLink($this->getServerLink());
-        return $this->outputCollection($collection);
+        $collection->addLink($this->listPoolsLink());
+        $collection->addLink($this->getPoolLink());
+        $collection->addQuery($this->createPoolQuery());
+        $collection->addQuery($this->updatePoolQuery());
+        $collection->addQuery($this->deletePoolQuery());
+        return $this->outputCollection($collection->toArray());
     }
     
     /**
@@ -90,6 +93,8 @@ class Pool extends PoolController
 
         $collection = new Collection($this->url("listPools"));
 
+        $collection->addLink($this->billboardLink());
+        
         foreach ($pools as $pool) {
             $collection->addItem($this->createPoolItem($pool));
         }
@@ -111,6 +116,11 @@ class Pool extends PoolController
             $collection = new Collection(
                 $this->url("getPool", ["poolId" => $poolId])
             );
+            
+            $collection->addLink($this->billboardLink());
+            $collection->addLink($this->listPoolsLink());
+            $collection->addQuery($this->updatePoolQuery($poolId));
+            $collection->addQuery($this->deletePoolQuery($poolId));
             
             $collection->addItem($this->createPoolItem($pool));
             return $this->outputCollection($collection);
@@ -166,6 +176,107 @@ class Pool extends PoolController
     }
     
     /**
+     * Get the link to the billboard
+     *
+     * @return object A link instance
+     */
+    private function billboardLink()
+    {
+        return new Property\Link(
+            $this->url("poolsBillboard"),
+            "billboard"
+        );
+    }
+    
+    /**
+     * Get the link for listing all pools
+     *
+     * @return object A link instance
+     */
+    private function listPoolsLink()
+    {
+        return new Property\Link(
+            $this->url("listPools"),
+            "index"
+        );
+    }
+    
+    /**
+     * Get the link for retrieving a specific pool
+     *
+     * @param string $poolId The id of the pool (optional, default: {poolId})
+     * @return object A query instance
+     */
+    private function getPoolLink($poolId = "{poolId}")
+    {
+        return new Property\Link(
+            urldecode($this->url("getPool", ["poolId" => $poolId])),
+            "item"
+        );
+    }
+    
+    /**
+     * Get the query for creating a new pool
+     *
+     * @return object A query instance
+     */
+    private function createPoolQuery()
+    {
+        $model = new PoolModel();
+        $query = new Property\Query(
+            $this->url("createPool"),
+            "create-form"
+        );
+        foreach ($model as $key => $value) {
+            $data = new Property\Data(
+                $key,
+                $value,
+                $model->getPrompt($key)
+            );
+            $query->addData($data);
+        }
+        return $query;
+    }
+    
+    /**
+     * Get the query for updating a pool
+     *
+     * @param string $poolId The id of the pool (optional, default: {poolId})
+     * @return object A query instance
+     */
+    private function updatePoolQuery($poolId = "{poolId}")
+    {
+        $model = new PoolModel();
+        $query = new Property\Query(
+            urldecode($this->url("createPool", ["poolId" => $poolId])),
+            "edit-form"
+        );
+        foreach ($model as $key => $value) {
+            $data = new Property\Data(
+                $key,
+                $value,
+                $model->getPrompt($key)
+            );
+            $query->addData($data);
+        }
+        return $query;
+    }
+    
+    /**
+     * Get the query for deleting a pool
+     *
+     * @param string $poolId The id of the pool (optional, default: {poolId})
+     * @return object A query instance
+     */
+    private function deletePoolQuery($poolId = "{poolId}")
+    {
+        return new Property\Query(
+            urldecode($this->url("deletePool", ["poolId" => $poolId])),
+            "delete"
+        );
+    }
+    
+    /**
      * Because there are several times where we need to create items out of pool
      * classes, it's better to have a function to handle that.
      *
@@ -184,31 +295,5 @@ class Pool extends PoolController
         }
         
         return $item;
-    }
-    
-    /**
-     * Get the link for listing all pools
-     *
-     * @return object A link object for the list all pools link
-     */
-    private function listLink()
-    {
-        return new Property\Link(
-            $this->url("listPools"),
-            "index"
-        );
-    }
-    
-    /**
-     * Get the link for retrieving a specific pool
-     *
-     * @return object A link object for the get pool link
-     */
-    private function getServerLink()
-    {
-        return new Property\Link(
-            urldecode($this->url("getPool", ["poolId" => "{poolId}"])),
-            "item"
-        );
     }
 }

@@ -45,7 +45,7 @@ class Server extends ServerController
         $collection->addLink($this->listServersLink());
         $collection->addLink($this->getServerLink());
         $collection->addQuery($this->createServerQuery());
-        $collection->addQuery($this->editServerQuery());
+        $collection->addQuery($this->updateServerQuery());
         $collection->addQuery($this->deleteServerQuery());
         $this->outputCollection($collection->toArray());
     }
@@ -95,6 +95,8 @@ class Server extends ServerController
         
         $collection = new Collection($this->url("listServers"));
         
+        $collection->addLink($this->billboardLink());
+        
         foreach ($servers as $server) {
             $collection->addItem(
                 $this->createServerItem($server)
@@ -118,6 +120,11 @@ class Server extends ServerController
             $collection = new Collection(
                 $this->url("getServer", ["serverId" => $serverId])
             );
+            
+            $collection->addLink($this->billboardLink());
+            $collection->addLink($this->listServersLink());
+            $collection->addQuery($this->updateServerQuery($serverId));
+            $collection->addQuery($this->deleteServerQuery($serverId));
             
             $collection->addItem($this->createServerItem($server));
             
@@ -179,6 +186,19 @@ class Server extends ServerController
     }
     
     /**
+     * Get the link to the billboard
+     *
+     * @return object A link instance
+     */
+    private function billboardLink()
+    {
+        return new Property\Link(
+            $this->url("serversBillboard"),
+            "billboard"
+        );
+    }
+    
+    /**
      * Get the link for listing all servers
      *
      * @return object A link instance
@@ -229,12 +249,12 @@ class Server extends ServerController
     }
     
     /**
-     * Get the query for editing a server
+     * Get the query for updating a server
      *
      * @param string $serverId The id of the server (optional, default: {serverId})
      * @return object A query instance
      */
-    private function editServerQuery($serverId = "{serverId}")
+    private function updateServerQuery($serverId = "{serverId}")
     {
         $model = new ServerModel();
         $query = new Property\Query(
@@ -267,7 +287,7 @@ class Server extends ServerController
     }
     
     /**
-     * Because there are several times where we need to create items out of 
+     * Because there are several times where we need to create items out of
      * server objects, it's better to have a function to handle that.
      *
      * @param object $server The server class
