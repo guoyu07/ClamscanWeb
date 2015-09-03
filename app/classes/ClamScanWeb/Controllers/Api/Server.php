@@ -154,7 +154,7 @@ class Server extends ServerController
         $input = $this->dataToArray($input->template->data);
         
         try {
-            $server = $this->update($serverId, $input);
+            $this->update($serverId, $input);
             
             return new Response("", 200);
         } catch (\RuntimeException $e) {
