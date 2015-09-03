@@ -47,13 +47,17 @@ class Pool
      * Get a specific pool by its id
      *
      * @param string $poolId The ID of the pool to get
-     * @return object A symfony response object
+     * @return object A pool model instance
      */
     public function get($poolId)
     {
         $dm = $this->app["deps"]["mongoDm"];
         $pool = $dm->getRepository("Iu\Uits\Webtech\ClamScanWeb\Models\Pool")
         ->findOneBy(["id" => $poolId]);
+        
+        if (is_null($pool)) {
+            throw new \RuntimeException("Not found", 404);
+        }
         
         return $pool;
     }
@@ -156,7 +160,7 @@ class Pool
      * Delete a pool
      *
      * @param string $poolId The pool id
-     * @return object A symfony response object
+     * @return object The deleted pool
      */
     public function delete($poolId)
     {
@@ -187,6 +191,7 @@ class Pool
      *
      * @param string $field The name of the field
      * @param string $value The value of the field
+     * @return bool Whether there's a pool with a field of the value specified
      */
     private function exists($field, $value)
     {

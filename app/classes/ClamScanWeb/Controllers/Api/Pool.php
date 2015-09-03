@@ -5,12 +5,12 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Controllers\Api;
 
+use CollectionJson\Collection;
+use CollectionJson\Property;
 use Iu\Uits\Webtech\ClamScanWeb\Controllers\Pool as PoolController;
 use Iu\Uits\Webtech\ClamScanWeb\Models\Pool as PoolModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use CollectionJson\Collection;
-use CollectionJson\Property;
 
 /**
  * This class provides collection+json functionality for the Pool controller
@@ -68,19 +68,15 @@ class Pool extends PoolController
          */
         try {
             $pool = $this->create($input);
+            
+            /**
+             * If everything went right, we should send the correct response
+             */
+            $poolUrl = $this->url("getPool", ["poolId" => $pool->getId()]);
+            return new Response("Created", 201, ["Location" => $poolUrl]);
         } catch (\RuntimeException $e) {
             return $this->handleException($e);
         }
-        
-        /**
-         * If everything went right, we should send the correct response
-         */
-        $poolUrl = $this->url("getPool", ["poolId" => $pool->getId()]);
-        return new Response(
-            "Created",
-            201,
-            ["Location" => $poolUrl]
-        );
     }
     
     /**
@@ -109,22 +105,18 @@ class Pool extends PoolController
      */
     public function returnPool($poolId)
     {
-        $pool = $this->get($poolId);
-        
-        $collection = new Collection(
-            $this->url(
-                "getPool",
-                ["poolId" => $poolId]
-            )
-        );
-        
-        if (is_null($pool)) {
-            $collection->setError($this->poolNotFoundError());
-            return $this->outputCollection($collection, 404);
+        try {
+            $pool = $this->get($poolId);
+            
+            $collection = new Collection(
+                $this->url("getPool", ["poolId" => $poolId])
+            );
+            
+            $collection->addItem($this->createPoolItem($pool));
+            return $this->outputCollection($collection);
+        } catch (\RuntimeException $e) {
+            return $this->handleException($e);
         }
-        
-        $collection->addItem($this->createPoolItem($pool));
-        return $this->outputCollection($collection);
     }
     
     /**
@@ -151,11 +143,10 @@ class Pool extends PoolController
         
         try {
             $this->update($poolId, $input);
+            return new Response("", 200);
         } catch (\RuntimeException $e) {
             return $this->handleException($e);
         }
-        
-        return new Response("", 200);
     }
     
     /**
@@ -168,11 +159,10 @@ class Pool extends PoolController
     {
         try {
             $this->delete($poolId);
+            return new Response("", 204);
         } catch (\RuntimeException $e) {
             return $this->handleException($e);
         }
-        
-        return new Response("", 204);
     }
     
     /**
