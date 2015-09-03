@@ -50,16 +50,16 @@ $deps["mongoDb"] = function ($c) {
 
 /**
  * Define the mongoDm function
- * 
+ *
  * @param object $c The pimple container
  * @return object The instance of DocumentManager for your database
  */
 $deps["mongoDm"] = function ($c) {
     $connection = new Doctrine\MongoDB\Connection($c["mongoClient"]);
     $config = new Doctrine\ODM\MongoDB\Configuration();
-    $config->setProxyDir(__dir__ . "/proxies");
+    $config->setProxyDir(__dir__ . "/../../cache/proxies");
     $config->setProxyNamespace("Proxies");
-    $config->setHydratorDir(__dir__ . "/hydrators");
+    $config->setHydratorDir(__dir__ . "/../../cache/hydrators");
     $config->setHydratorNamespace("Hydrators");
     $config->setDefaultDB($c["config"]->mongodb->database);
     $config->setMetadataDriverImpl(
