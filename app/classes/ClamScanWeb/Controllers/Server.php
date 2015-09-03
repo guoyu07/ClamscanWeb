@@ -5,7 +5,6 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Controllers;
 
-use CollectionJson\Collection;
 use CollectionJson\Property;
 use Iu\Uits\Webtech\ClamScanWeb\Models\Server as ServerModel;
 use Symfony\Component\Routing\Generator\UrlGenerator;
