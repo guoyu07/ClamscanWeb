@@ -1,11 +1,15 @@
 <?php
-
+/**
+ * This file is the server model for ClamScan Web
+ * @license MIT
+ */
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
 Use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
  * @ODM\Document(collection="servers")
+ * @author Anthony Vitacco <avitacco@.iu.edu>
  */
 class Server implements \JsonSerializable
 {
@@ -67,7 +71,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Address
      *
+     * @return string The address
      */
     public function getAddress()
     {
@@ -75,7 +81,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Address
      *
+     * @param string $address The address
      */
     public function setAddress($value)
     {
@@ -83,7 +91,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Port
      *
+     * @return int The port number
      */
     public function getPort()
     {
@@ -91,7 +101,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Port
      *
+     * @param int $value The port number
      */
     public function setPort($value)
     {
@@ -99,7 +111,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Auth Method
      *
+     * @return string The auth method
      */
     public function getAuthMethod()
     {
@@ -107,7 +121,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Auth Method
      *
+     * @param string $value The auth method
      */
     public function setAuthMethod($value)
     {
@@ -115,7 +131,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Username
      *
+     * @return string The username
      */
     public function getUsername()
     {
@@ -123,7 +141,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Username
      *
+     * @param string $value The username
      */
     public function setUsername($value)
     {
@@ -131,7 +151,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Password
      *
+     * @return string The password
      */
     public function getPassword()
     {
@@ -139,7 +161,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Password
      *
+     * @param string $password The password
      */
     public function setPassword($value)
     {
@@ -147,7 +171,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Public Key
      *
+     * @return string The public key
      */
     public function getPublicKey()
     {
@@ -155,7 +181,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Public Key
      *
+     * @param string $value The public key
      */
     public function setPublicKey($value)
     {
@@ -163,7 +191,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Get Private Key
      *
+     * @return string The private key
      */
     public function getPrivateKey()
     {
@@ -171,7 +201,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * Set Private Key
      *
+     * @param string $value The private key
      */
     public function setPrivateKey($value)
     {
@@ -179,7 +211,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * This function returns all class scope variables as an array
      *
+     * @return array The values from this class
      */
     public function toArray()
     {
@@ -197,7 +231,10 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * This function returns the prompt for a field
      *
+     * @param string $field The field
+     * @return string The prompt for the given field
      */
     public function getPrompt($field)
     {
@@ -217,7 +254,9 @@ class Server implements \JsonSerializable
     }
     
     /**
+     * This function returns the information to be serialized as json
      *
+     * @return array The information
      */
     public function jsonSerialize()
     {
