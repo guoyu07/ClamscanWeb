@@ -6,7 +6,6 @@
 namespace Iu\Uits\Webtech\ClamScanWeb\Controllers;
 
 use Iu\Uits\Webtech\ClamScanWeb\Models\Server as ServerModel;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Server controller class
