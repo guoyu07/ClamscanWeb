@@ -5,7 +5,7 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
-Use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
  * @ODM\Document(collection="servers")
