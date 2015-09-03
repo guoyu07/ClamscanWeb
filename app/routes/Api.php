@@ -4,7 +4,7 @@
  * @license MIT
  */
 $app["controllers.pool"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Api\Pool($app);
-$app["controllers.server"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Server($app);
+$app["controllers.server"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Api\Server($app);
 $api = $app["controllers_factory"];
 
 /**
@@ -67,7 +67,7 @@ $api->match("servers", "controllers.server:billboard")
  * PUT|POST
  * Create a new server
  */
-$api->match("servers/create", "controllers.server:create")
+$api->match("servers/create", "controllers.server:createServer")
 ->method("PUT|POST")
 ->bind("createServer");
 
@@ -75,7 +75,7 @@ $api->match("servers/create", "controllers.server:create")
  * GET
  * Get a list of available servers
  */
-$api->match("servers/list", "controllers.server:getList")
+$api->match("servers/list", "controllers.server:returnServerList")
 ->method("GET")
 ->bind("listServers");
 
@@ -83,14 +83,15 @@ $api->match("servers/list", "controllers.server:getList")
  * GET
  * Get a specific server
  */
-$api->match("servers/get/{serverId}", "controllers.server:get")
+$api->match("servers/get/{serverId}", "controllers.server:returnServer")
 ->method("GET")
 ->bind("getServer");
 
 /**
  * PATCH|POST
+ * Update a specific server
  */
-$api->match("servers/update/{serverId}", "controllers.server:update")
+$api->match("servers/update/{serverId}", "controllers.server:updateServer")
 ->method("PATCH|POST")
 ->bind("updateServer");
 
@@ -98,7 +99,7 @@ $api->match("servers/update/{serverId}", "controllers.server:update")
  * DELETE|POST
  * Delete an existing server
  */
-$api->match("servers/delete/{serverId}", "controllers.server:delete")
+$api->match("servers/delete/{serverId}", "controllers.server:deleteServer")
 ->method("DELETE|POST")
 ->bind("deleteServer");
 
