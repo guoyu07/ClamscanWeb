@@ -86,7 +86,11 @@ trait CollectionHelper
     }
     
     /**
+     * Transform all of the data elements submitted in a request to a
+     * associative array
      *
+     * @param object $input The data section of a collection+json submission (as stdClass)
+     * @return array The data section as an associative array
      */
     private function dataToArray($input)
     {
