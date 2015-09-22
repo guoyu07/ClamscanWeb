@@ -35,12 +35,8 @@ class Pool
         $response = $this->makeSubquery($request);
         $reply = json_decode($response->getContent());
         
-        //return $this->app->json($reply);
-        
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
-        
-        //var_dump($variables);die();
         
         return $this->app->render("pages/pools.twig", $variables);
     }
@@ -52,10 +48,6 @@ class Pool
     {
         $response = $this->makeSubquery($request);
         $reply = json_decode($response->getContent());
-        
-        //var_dump($response->getContent());die();
-        
-        //return $this->app->json($reply);
         
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
@@ -73,7 +65,7 @@ class Pool
         
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
-        //return $this->app->json($reply);
+        
         return $this->app->render("pages/pool.twig", $variables);
     }
 }

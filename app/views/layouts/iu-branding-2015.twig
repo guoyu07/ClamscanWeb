@@ -31,41 +31,36 @@
     </div>
     
     <div class="container main-container">
-            {% include "elements/menu.twig" %}
+        {% include "elements/menu.twig" %}
     
-    <div class="content">
-        <p></p>
-        <div class="col-md-2">
-            <ul class="nav nav-pills nav-stacked">
-                {% for link in data.links %}
-                    {% if link.rel != "home" and link.rel != "template" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ link.href }}">{{ link.prompt}}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% for query in data.queries %}
-                    {% if query.rel != "query-template" %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ query.href }}">{{ query.prompt }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-        
-        <div class="col-md-10">
-            {% block content %}{% endblock %}
-        </div>
-
-    </div>
+        <div class="content">
+            <p></p>
+            <div class="col-md-2">
+                <ul class="nav nav-pills nav-stacked">
+                    {% for link in data.links %}
+                        {% if link.rel != "home" and link.rel != "template" %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ link.href }}">{{ link.prompt}}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% for query in data.queries %}
+                        {% if query.rel != "query-template" %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ query.href }}">{{ query.prompt }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
             
-            
-            
-            
-    </div>
+            <div class="col-md-10">
+                {% block content %}{% endblock %}
+            </div>
     
+        </div>
+    </div>
     
     <footer id="footer-v1" role="contentinfo" itemscope="itemscope" itemtype="http://schema.org/CollegeOrUniversity">
         <div class="wrapper">
