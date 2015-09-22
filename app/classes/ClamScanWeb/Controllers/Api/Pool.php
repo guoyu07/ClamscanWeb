@@ -43,12 +43,13 @@ class Pool extends PoolController
         $collection = new Collection(
             $this->url("poolsBillboard")
         );
+        $collection->addLink($this->homeLink());
         $collection->addLink($this->listPoolsLink());
         $collection->addLink($this->getPoolLink());
         $collection->addQuery($this->createPoolQuery());
         $collection->addQuery($this->updatePoolQuery());
         $collection->addQuery($this->deletePoolQuery());
-        return $this->outputCollection($collection->toArray());
+        return $this->outputCollection($collection);
     }
     
     /**
@@ -92,7 +93,8 @@ class Pool extends PoolController
         $pools = $this->getList();
 
         $collection = new Collection($this->url("listPools"));
-
+        
+        $collection->addLink($this->homeLink());
         $collection->addLink($this->billboardLink());
         
         foreach ($pools as $pool) {
@@ -117,6 +119,7 @@ class Pool extends PoolController
                 $this->url("getPool", ["poolId" => $poolId])
             );
             
+            $collection->addLink($this->homeLink());
             $collection->addLink($this->billboardLink());
             $collection->addLink($this->listPoolsLink());
             $collection->addQuery($this->updatePoolQuery($poolId));
@@ -176,6 +179,20 @@ class Pool extends PoolController
     }
     
     /**
+     *
+     */
+    private function homeLink()
+    {
+        return new Property\Link(
+            $this->url("apiBillboard"),
+            "home",
+            "home",
+            null,
+            "Home"
+        );
+    }
+    
+    /**
      * Get the link to the billboard
      *
      * @return object A link instance
@@ -197,22 +214,37 @@ class Pool extends PoolController
     {
         return new Property\Link(
             $this->url("listPools"),
-            "index"
+            "index",
+            "poolsList",
+            null,
+            "List Pools"
         );
     }
     
     /**
      * Get the link for retrieving a specific pool
-     *
+     * 
      * @param string $poolId The id of the pool (optional, default: {poolId})
      * @return object A query instance
      */
     private function getPoolLink($poolId = "{poolId}")
     {
-        return new Property\Link(
+        $link = new Property\Link(
             urldecode($this->url("getPool", ["poolId" => $poolId])),
-            "item"
+            ""
         );
+        
+        if ($poolId == "{poolId}") {
+            $link->setRel("template");
+            return $link;
+        }
+        
+        $pool = $this->getPool($poolId);
+        $link->setRel("item");
+        $link->setName($pool->getName());
+        $link->setPrompt($pool->getName());
+        
+        return $link;
     }
     
     /**
@@ -227,6 +259,7 @@ class Pool extends PoolController
             $this->url("createPool"),
             "create-form"
         );
+        $query->setPrompt("Create");
         foreach ($model as $key => $value) {
             $data = new Property\Data(
                 $key,
@@ -248,9 +281,15 @@ class Pool extends PoolController
     {
         $model = new PoolModel();
         $query = new Property\Query(
-            urldecode($this->url("createPool", ["poolId" => $poolId])),
+            urldecode($this->url("updatePool", ["poolId" => $poolId])),
             "edit-form"
         );
+        
+        if ($poolId == "{poolId}") {
+            $query->setRel("query-template");
+        }
+        
+        $query->setPrompt("Update");
         foreach ($model as $key => $value) {
             $data = new Property\Data(
                 $key,
@@ -270,10 +309,18 @@ class Pool extends PoolController
      */
     private function deletePoolQuery($poolId = "{poolId}")
     {
-        return new Property\Query(
+        $query = new Property\Query(
             urldecode($this->url("deletePool", ["poolId" => $poolId])),
             "delete"
         );
+        
+        $query->setPrompt("Delete");
+        
+        if ($poolId == "{poolId}") {
+            $query->setRel("query-template");
+        }
+        
+        return $query;
     }
     
     /**
@@ -290,7 +337,7 @@ class Pool extends PoolController
         );
         
         foreach ($pool->toArray() as $key => $value) {
-            $data = new Property\Data($key, $value);
+            $data = new Property\Data($key, $value, $pool->getPrompt($key));
             $item->addData($data);
         }
         

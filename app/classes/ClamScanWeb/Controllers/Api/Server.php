@@ -47,7 +47,7 @@ class Server extends ServerController
         $collection->addQuery($this->createServerQuery());
         $collection->addQuery($this->updateServerQuery());
         $collection->addQuery($this->deleteServerQuery());
-        $this->outputCollection($collection->toArray());
+        return $this->outputCollection($collection);
     }
     
     /**
@@ -287,7 +287,7 @@ class Server extends ServerController
     }
     
     /**
-     * Because there are several times where we need to create items out of
+     * Because there are several times where we need to create items out of 
      * server objects, it's better to have a function to handle that.
      *
      * @param object $server The server class

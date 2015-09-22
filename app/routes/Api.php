@@ -3,9 +3,24 @@
  * This file contains the route definitions for the REST-ful api for ClamScanWeb
  * @license MIT
  */
+$app["controllers.api"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Api\Api($app);
 $app["controllers.pool"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Api\Pool($app);
 $app["controllers.server"] = new \Iu\Uits\Webtech\ClamScanWeb\Controllers\Api\Server($app);
+
+/**
+ * Get a new controller from the factory and set it so that all routes accept
+ * application/vnd.collection+json
+ */
 $api = $app["controllers_factory"];
+$api->accept(["application/vnd.collection+json"]);
+
+/**
+ * GET
+ * Return the main billboard
+ */
+$api->match("/", "controllers.api:billboard")
+->method("GET")
+->bind("apiBillboard");
 
 /**
  * GET
@@ -103,4 +118,7 @@ $api->match("servers/delete/{serverId}", "controllers.server:deleteServer")
 ->method("DELETE|POST")
 ->bind("deleteServer");
 
-$app->mount("/api", $api);
+/**
+ * Mount the controller to the correct mount point
+ */
+$app->mount("/", $api);

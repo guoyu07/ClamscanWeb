@@ -1,0 +1,20 @@
+{% extends "/layouts/" ~ layout ~ ".twig" %}
+
+{% block content %}
+    {% include "elements/menu.twig" %}
+    
+    <p>
+        {% for field in data.items.0.data %}
+            {% if field.name == "servers" %}
+                <div>
+                    <p>{{ field.prompt }}:</p>
+                    {% for subField in field.value %}
+                        <div>{{ subField }}</div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div>{{ field.prompt }}: {{ field.value }}</div>
+            {% endif %}
+        {% endfor %}
+    </p>
+{% endblock %}
