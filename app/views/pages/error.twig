@@ -1,0 +1,12 @@
+{% extends "/layouts/" ~ layout ~ ".twig" %}
+
+{% block pageTitle %}A wild problem has appeared!{% endblock %}
+
+{% block content %}
+    <h3>Oops! We've encountered a problem!</h3>
+    {% if message is defined %}
+        <div class="alert alert-{{ message.type }}" role="alert">
+            {{ message.content }}
+        </div>
+    {% endif %}
+{% endblock %}

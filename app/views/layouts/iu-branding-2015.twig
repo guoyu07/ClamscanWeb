@@ -37,21 +37,25 @@
             <p></p>
             <div class="col-md-2">
                 <ul class="nav nav-pills nav-stacked">
-                    {% for link in data.links %}
-                        {% if link.rel != "home" and link.rel != "template" %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ link.href }}">{{ link.prompt}}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% for query in data.queries %}
-                        {% if query.rel != "query-template" %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ query.href }}">{{ query.prompt }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                    {% if data.links is defined %}
+                        {% for link in data.links %}
+                            {% if link.rel != "home" and link.rel != "template" %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ link.href }}">{{ link.prompt}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                
+                    {% if data.queries is defined %}
+                        {% for query in data.queries %}
+                            {% if query.rel != "query-template" %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ query.href }}">{{ query.prompt }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </ul>
             </div>
             

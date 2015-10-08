@@ -1,8 +1,6 @@
 {% extends "/layouts/" ~ layout ~ ".twig" %}
 
 {% block content %}
-    {% include "elements/menu.twig" %}
-    
     <p>
         {% for field in data.items.0.data %}
             {% if field.name == "servers" %}

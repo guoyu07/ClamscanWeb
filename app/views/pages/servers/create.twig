@@ -1,0 +1,27 @@
+{% extends "/layouts/" ~ layout ~ ".twig" %}
+
+{% block pageTitle %}Create a new server{% endblock %}
+
+{% block content %}
+    <form method="post" action="{{ url("createServer") }}" enctype="application/x-www-form-urlencoded">
+        {% for field in data.queries.0.data %}
+            {% if field.name != "id" %}
+                <fieldset class="form-group">
+                    <label for="{{ field.name }}">{{ field.prompt }}</label>
+                    {% if field.value is iterable %}
+                        <select class="form-control" name="{{ field.name }}" id="{{ field.name }}">
+                            {% for item in field.value %}
+                                <option>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input class="form-control" type="text" name="{{ field.name }}" id="{{ field.name }}" />
+                    {% endif %}
+                </fieldset>
+            {% endif %}
+        {% endfor %}
+        <fieldset>
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </fieldset>
+    </form>
+{% endblock %}

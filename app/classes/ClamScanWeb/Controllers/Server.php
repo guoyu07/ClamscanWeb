@@ -119,7 +119,11 @@ class Server
         /**
          * Server names MUST be unique
          */
-        if (isset($input["name"]) && $this->exists("name", $input["name"])) {
+        if (
+            isset($input["name"]) &&                // If we were given a name
+            $input["name"] != $server->getName() && // and it's different from the old one
+            $this->exists("name", $input["name"])   // and a server has the name already
+        ) {
             throw new \RuntimeException("Conflict", 409);
         }
         

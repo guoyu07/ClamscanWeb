@@ -7,6 +7,7 @@
 namespace Iu\Uits\Webtech\ClamScanWeb\Traits;
 
 use CollectionJson\Collection;
+use CollectionJson\Property;
 
 /**
  * This trait provides some useful helper classes for dealing with collection
@@ -144,5 +145,19 @@ trait CollectionHelper
         }
         $collection->setError($error);
         return $this->outputCollection($collection, $e->getCode());
+    }
+    
+    /**
+     *
+     */
+    private function homeLink()
+    {
+        return new Property\Link(
+            $this->url("apiBillboard"),
+            "home",
+            "home",
+            null,
+            "Home"
+        );
     }
 }

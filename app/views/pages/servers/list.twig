@@ -1,0 +1,31 @@
+{% extends "/layouts/" ~ layout ~ ".twig" %}
+
+{% block pageTitle %}List of servers{% endblock %}
+
+{% block content %}
+    <p>
+        {% if data.items is defined %}
+            {% for item in data.items %}
+                <div class="col-sm-4">
+                    <div class="card card-block">
+                        <h4 class="card-title">
+                            <a href="{{ url("getServer", {"serverId": item.data.0.value}) }}">{{ item.data.1.value }}</a>
+                        </h4>
+                        <p class="card-text">
+                            <dl>
+                                <dt>Address</dt>
+                                <dd>{{ item.data.2.value }}</dd>
+                                <dt>Port</dt>
+                                <dd>{{ item.data.3.value }}</dd>
+                            </dl>
+                        </p>
+                        <a href="{{ url("updateServer", {"serverId": item.data.0.value}) }}" class="card-link btn btn-primary-outline">Edit</a>
+                        <a href="{{ url("deleteServer", {"serverId": item.data.0.value}) }}" class="card-link btn btn-warning-outline">Delete</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>There aren't any servers to display.</p>
+        {% endif %}
+    </p>
+{% endblock %}

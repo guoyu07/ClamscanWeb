@@ -1,7 +1,6 @@
 {% extends "/layouts/" ~ layout ~ ".twig" %}
 
 {% block content %}
-    {% include "elements/menu.twig" %}
     <p>
         {% for item in data.items %}
             <a href="{{ url("getPool", {"poolId": item.data.0.value}) }}">{{ item.data.1.value }}</a>

@@ -51,6 +51,19 @@ class Server extends ServerController
     }
     
     /**
+     *
+     */
+    public function createServerTemplate(Request $request)
+    {
+        $collection = new Collection($this->url("createServer"));
+        $collection->addLink($this->homeLink());
+        $collection->addLink($this->listServersLink());
+        $collection->addLink($this->getServerLink());
+        $collection->addQuery($this->createServerQuery());
+        return $this->outputCollection($collection);
+    }
+    
+    /**
      * Create a new server
      *
      * @param object $request A symfony request instance
@@ -96,7 +109,10 @@ class Server extends ServerController
         $collection = new Collection($this->url("listServers"));
         
         $collection->addLink($this->billboardLink());
-        
+        $collection->addLink($this->listServersLink());
+        $collection->addQuery($this->createServerQuery());
+        $collection->addQuery($this->updateServerQuery());
+        $collection->addQuery($this->deleteServerQuery());
         foreach ($servers as $server) {
             $collection->addItem(
                 $this->createServerItem($server)
@@ -123,6 +139,7 @@ class Server extends ServerController
             
             $collection->addLink($this->billboardLink());
             $collection->addLink($this->listServersLink());
+            $collection->addQuery($this->createServerQuery());
             $collection->addQuery($this->updateServerQuery($serverId));
             $collection->addQuery($this->deleteServerQuery($serverId));
             
@@ -194,7 +211,10 @@ class Server extends ServerController
     {
         return new Property\Link(
             $this->url("serversBillboard"),
-            "billboard"
+            "home",
+            "billboardLink",
+            null,
+            "Servers Home"
         );
     }
     
@@ -207,7 +227,10 @@ class Server extends ServerController
     {
         return new Property\Link(
             $this->url("listServers"),
-            "index"
+            "index",
+            "serversList",
+            null,
+            "List Servers"
         );
     }
     
@@ -219,10 +242,22 @@ class Server extends ServerController
      */
     private function getServerLink($serverId = "{serverId}")
     {
-        return new Property\Link(
+        $link = new Property\Link(
             urldecode($this->url("getServer", ["serverId" => $serverId])),
-            "item"
+            ""
         );
+        
+        if ($serverId == "{serverId}") {
+            $link->setRel("template");
+            return $link;
+        }
+        
+        $server = $this->getServer();
+        $link->setRel("item");
+        $link->setName($server->getName());
+        $link->setPrompt($server->getName());
+        
+        return $link;
     }
     
     /**
@@ -237,7 +272,8 @@ class Server extends ServerController
             $this->url("createServer"),
             "create-form"
         );
-        foreach ($model as $key => $value) {
+        $query->setPrompt("Create");
+        foreach ($model->toArray() as $key => $value) {
             $data = new Property\Data(
                 $key,
                 $value,
@@ -258,10 +294,16 @@ class Server extends ServerController
     {
         $model = new ServerModel();
         $query = new Property\Query(
-            urldecode($this->url("editServer", ["serverId" => $serverId])),
+            urldecode($this->url("updateServer", ["serverId" => $serverId])),
             "edit-form"
         );
-        foreach ($model as $key => $value) {
+        
+        if ($serverId == "{serverId}") {
+            $query->setRel("query-template");
+        }
+        
+        $query->setPrompt("Update");
+        foreach ($model->toArray() as $key => $value) {
             $data = new Property\Data(
                 $key,
                 $value,
@@ -282,7 +324,9 @@ class Server extends ServerController
     {
         return new Property\Query(
             urldecode($this->url("deleteServer", ["serverId" => $serverId])),
-            "delete"
+            "query-template",
+            "",
+            "Delete"
         );
     }
     

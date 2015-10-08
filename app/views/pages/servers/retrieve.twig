@@ -1,0 +1,28 @@
+{% extends "/layouts/" ~ layout ~ ".twig" %}
+
+{% block pageTitle %}List of servers{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" {% if mode != "view" %}action="{{ url("updateServer", {serverId: data.items.0.data.0.value}) }}" method="post"{% endif %}>
+        {% for key, field in data.queries.0.data %}
+            {% if field.prompt != "" %}
+                <div class="form-group row">
+                    <label for="{{ field.name }}" class="col-sm-2 control-label">{{ field.prompt }}</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="{{ field.name }}" id="{{ field.name }}" value="{{ data.items.0.data[ loop.index0 ].value }}" {% if mode == "view" %}disabled="disabled"{% endif %}/>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if mode != "view" %}
+            <div class="form-group row">
+                <div class="col-sm-1 col-sm-offset-2">
+                    <button class="btn btn-primary-outline" type="submit">Save</button>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-warning-outline" type="reset">Reset</button>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+{% endblock %}

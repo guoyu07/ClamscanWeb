@@ -24,6 +24,18 @@ trait WebHelper
     private function makeSubquery(Request $request)
     {
         /**
+         * We need to preserve the method for later after we nullify everything
+         */
+        $method = $request->getMethod();
+        
+        /**
+         * By the time we're here, the framework has already worked out which
+         * controller to use for this request, we unset that crap all here so
+         * that it's re-routed.
+         */
+        $request->attributes->replace([]);
+        
+        /**
          * Unset the given Accept and HTTP_ACCEPT headers, they'll (probably) be
          * wrong for what we're doing here.
          */
@@ -35,11 +47,11 @@ trait WebHelper
         );
         
         /**
-         * By the time we're here, the framework has already worked out which
-         * controller to use for this request, we unset that crap all here so
-         * that it's re-routed.
+         * Re-set the method
          */
-        $request->attributes->replace([]);
+        $request->setMethod($method);
+        
+        //var_dump($request);die();
         
         /**
          * Finally return the response from the application for the modified

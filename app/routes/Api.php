@@ -31,6 +31,12 @@ $api->match("pools", "controllers.pool:billboard")
 ->bind("poolsBillboard");
 
 /**
+ *
+ */
+$api->match("pools/create", "controllers.pool:createPoolTemplate")
+->method("GET");
+
+/**
  * PUT|POST
  * Create a new pool
  */
@@ -77,6 +83,12 @@ $api->match("pools/delete/{poolId}", "controllers.pool:deletePool")
 $api->match("servers", "controllers.server:billboard")
 ->method("GET")
 ->bind("serversBillboard");
+
+/**
+ *
+ */
+$api->match("servers/create", "controllers.server:createServerTemplate")
+->method("GET");
 
 /**
  * PUT|POST

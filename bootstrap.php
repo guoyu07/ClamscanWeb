@@ -13,6 +13,13 @@ $app->register(new Breaker1\Silex\AcceptHeaderServiceProvider\ServiceProvider())
 $app["deps"] = $deps;
 
 /**
+ * Set the application debug mode
+ * Among other things, this will cause the twig service provider to add the
+ * twig debug extension to twig to enable the dump function
+ */
+$app["debug"] = $app["deps"]["config"]->application->debug;
+
+/**
  * Initialize the twig service provider
  */
 $app->register(

@@ -53,6 +53,19 @@ class Pool extends PoolController
     }
     
     /**
+     *
+     */
+    public function createPoolTemplate(Request $request)
+    {
+        $collection = new Collection($this->url("createPool"));
+        $collection->addLink($this->homeLink());
+        $collection->addLink($this->listPoolsLink());
+        $collection->addLink($this->getPoolLink());
+        $collection->addQuery($this->createPoolQuery());
+        return $this->outputCollection($collection);
+    }
+    
+    /**
      * Create a new pool
      *
      * @param object A symfony request object instance
@@ -179,20 +192,6 @@ class Pool extends PoolController
     }
     
     /**
-     *
-     */
-    private function homeLink()
-    {
-        return new Property\Link(
-            $this->url("apiBillboard"),
-            "home",
-            "home",
-            null,
-            "Home"
-        );
-    }
-    
-    /**
      * Get the link to the billboard
      *
      * @return object A link instance
@@ -260,7 +259,7 @@ class Pool extends PoolController
             "create-form"
         );
         $query->setPrompt("Create");
-        foreach ($model as $key => $value) {
+        foreach ($model->toArray() as $key => $value) {
             $data = new Property\Data(
                 $key,
                 $value,
@@ -290,7 +289,7 @@ class Pool extends PoolController
         }
         
         $query->setPrompt("Update");
-        foreach ($model as $key => $value) {
+        foreach ($model->toArray() as $key => $value) {
             $data = new Property\Data(
                 $key,
                 $value,

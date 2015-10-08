@@ -17,6 +17,10 @@ class Pool
     /** Use the WebHelper trait */
     use \Iu\Uits\Webtech\ClamScanWeb\Traits\WebHelper;
     
+    /** Use the CollectionHelper trait */
+    use \Iu\Uits\Webtech\ClamScanWeb\Traits\CollectionHelper;
+
+    
     /**
      * Magic constructor function
      *
@@ -38,7 +42,7 @@ class Pool
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
         
-        return $this->app->render("pages/pools.twig", $variables);
+        return $this->app->render("pages/pools/index.twig", $variables);
     }
     
     /**
@@ -52,7 +56,7 @@ class Pool
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
         
-        return $this->app->render("pages/poolsView.twig", $variables);
+        return $this->app->render("pages/pools/list.twig", $variables);
     }
     
     /**
@@ -66,6 +70,21 @@ class Pool
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
         
-        return $this->app->render("pages/pool.twig", $variables);
+        return $this->app->render("pages/pools/pool.twig", $variables);
+    }
+    
+    /**
+     *
+     */
+    public function getCreatePage(Request $request)
+    {
+        
+        $response = $this->makeSubquery($request);
+        $reply = json_decode($response->getContent());
+        
+        $variables = $this->templateVars();
+        $variables["data"] = $reply->collection;
+        
+        return $this->app->render("pages/pools/create.twig", $variables);
     }
 }
