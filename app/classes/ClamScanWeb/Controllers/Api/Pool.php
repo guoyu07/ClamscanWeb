@@ -5,6 +5,8 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Controllers\Api;
 
+use Breaker1\CollectionJson\Property\Data;
+use Breaker1\CollectionJson\Property\Validation;
 use CollectionJson\Collection;
 use CollectionJson\Property;
 use Iu\Uits\Webtech\ClamScanWeb\Controllers\Pool as PoolController;

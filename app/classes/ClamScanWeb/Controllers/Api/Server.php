@@ -5,6 +5,8 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Controllers\Api;
 
+use Breaker1\CollectionJson\Property\Data;
+use Breaker1\CollectionJson\Property\Validation;
 use CollectionJson\Collection;
 use CollectionJson\Property;
 use Iu\Uits\Webtech\ClamScanWeb\Controllers\Server as ServerController;
@@ -274,13 +276,16 @@ class Server extends ServerController
         );
         $query->setPrompt("Create");
         foreach ($model->toArray() as $key => $value) {
-            $data = new Property\Data(
+            $this->getValidations($key);
+            $data = new Data(
                 $key,
                 $value,
-                $model->getPrompt($key)
+                $this->getPrompt($key)
             );
+            $data->addValidationSet($this->getValidations($key));
             $query->addData($data);
         }
+        
         return $query;
     }
     
@@ -307,7 +312,7 @@ class Server extends ServerController
             $data = new Property\Data(
                 $key,
                 $value,
-                $model->getPrompt($key)
+                $this->getPrompt($key)
             );
             $query->addData($data);
         }
@@ -349,5 +354,64 @@ class Server extends ServerController
         }
         
         return $item;
+    }
+    
+    /**
+     * Get the prompt for a field
+     *
+     * @param string $field The field
+     * @return string The prompt
+     */
+    private function getPrompt($field)
+    {
+        $annotReader = $this->app["deps"]["annotationReader"];
+        $server = new \ReflectionClass("Iu\Uits\Webtech\ClamScanWeb\Models\Server");
+        
+        $prompt = $annotReader->getPropertyAnnotations(
+            $server->getProperty($field)
+        )[1]->prompt;
+        
+        return $prompt;
+    }
+    
+    /**
+     * Get the validations for a field
+     *
+     * @param string $field The field
+     * @return array An array of validations for the field specified
+     */
+    private function getValidations($field)
+    {
+        $annotReader = $this->app["deps"]["annotationReader"];
+        $server = new \ReflectionClass("Iu\Uits\Webtech\ClamScanWeb\Models\Server");
+        
+        $properties = $annotReader->getPropertyAnnotations(
+            $server->getProperty($field)
+        )[1];
+        
+        $validations = [];
+        
+        /** Add the presence validation if this is a required field */
+        if ($properties->required) {
+            $validations[] = new Validation("presence");
+        }
+        
+        /** Create a type validation (which isn't actually in the spec) */
+        $validations[] = new Validation(
+            "type",
+            null,
+            ["name" => "is", "value" => $properties->type]
+        );
+        
+        /** Add an includes validation if there are any options given */
+        if (count($properties->options)) {
+            $validation = new Validation("inclusion", "The list of allowed options for {$field}");
+            foreach ($properties->options as $option) {
+                $validation->addArgument("option", $option);
+            }
+            $validations[] = $validation;
+        }
+        
+        return $validations;
     }
 }

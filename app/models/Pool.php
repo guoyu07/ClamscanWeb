@@ -2,6 +2,7 @@
 
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
+use Iu\Uits\Webtech\ClamScanWeb\Annotations as Internal;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
@@ -12,10 +13,16 @@ class Pool implements \JsonSerializable
     /** @ODM\Id */
     private $id;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="string", prompt="Name")
+     */
     private $name;
     
-    /** @ODM\ReferenceMany(targetDocument="Server", cascade={"all"}) */
+    /**
+     * @ODM\ReferenceMany(targetDocument="Server", cascade={"all"})
+     * @Internal\FieldInfo(type="select", prompt="Servers in pool")
+     */
     private $servers = [];
     
     /**
@@ -102,22 +109,22 @@ class Pool implements \JsonSerializable
         ];
     }
     
-    /**
-     * This function returns the prompt for a given field
-     *
-     * @param string $field The field
-     * @return string The prompt
-     */
-    public function getPrompt($field)
-    {
-        $prompts = [
-            "id" => "Id",
-            "name" => "Name",
-            "servers" => "Servers",
-        ];
-        
-        return $prompts[$field];
-    }
+    ///**
+    // * This function returns the prompt for a given field
+    // *
+    // * @param string $field The field
+    // * @return string The prompt
+    // */
+    //public function getPrompt($field)
+    //{
+    //    $prompts = [
+    //        "id" => "Id",
+    //        "name" => "Name",
+    //        "servers" => "Servers",
+    //    ];
+    //    
+    //    return $prompts[$field];
+    //}
     
     /**
      * This function is called magically when this class is json_serialize'd

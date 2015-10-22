@@ -65,7 +65,27 @@ $deps["mongoDm"] = function ($c) {
     $config->setMetadataDriverImpl(
         Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::create(__dir__ . "/app/models")
     );
+    
+    /** Register the custom annotations class so we don't get errors */
+    Doctrine\Common\Annotations\AnnotationRegistry::registerFile(
+        __dir__ . "/../classes/ClamScanWeb/Annotations/FieldInfo.php"
+    );
     Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
     
     return Doctrine\ODM\MongoDB\DocumentManager::create($connection, $config);
+};
+
+/**
+ * Define the doctrine annotation reader function
+ *
+ * @return object An instance of the doctrine annotation reader
+ */
+$deps["annotationReader"] = function () {
+    Doctrine\Common\Annotations\AnnotationRegistry::registerFile(
+        __dir__ . "/../classes/ClamScanWeb/Annotations/FieldInfo.php"
+    );
+    Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
+    $reader = new \Doctrine\Common\Annotations\AnnotationReader();
+    
+    return $reader;
 };

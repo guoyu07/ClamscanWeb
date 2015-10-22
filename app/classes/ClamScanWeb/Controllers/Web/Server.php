@@ -55,7 +55,7 @@ class Server
     {
         $response = $this->makeSubquery($request);
         $reply = json_decode($response->getContent());
-        
+        return $this->app->json($reply);
         $variables = $this->templateVars();
         $variables["data"] = $reply->collection;
         

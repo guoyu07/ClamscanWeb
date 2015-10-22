@@ -5,6 +5,7 @@
  */
 namespace Iu\Uits\Webtech\ClamScanWeb\Models;
 
+use Iu\Uits\Webtech\ClamScanWeb\Annotations as Internal;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
@@ -13,31 +14,58 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  */
 class Server implements \JsonSerializable
 {
-    /** @ODM\Id */
+    /**
+     * @ODM\Id
+     * @Internal\FieldInfo(type="hidden", prompt="")
+     */
     private $id;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="string", prompt="Name", required=true)
+     */
     private $name;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="string", prompt="Address/hostname", required=true)
+     */
     private $address;
     
-    /** @ODM\Field(type="int") */
+    /**
+     * @ODM\Field(type="int")
+     * @Internal\FieldInfo(type="number", prompt="Port number", defaultVal="22", required=true)
+     */
     private $port = 22;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="select", prompt="Authentication Method", options={"Key","Password"}, default="Password")
+     */
     private $authMethod;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="text", prompt="Username", placeholder="root")
+     */
     private $username;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="password", prompt="Password")
+     */
     private $password;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="textarea", prompt="Public key")
+     */
     private $publicKey;
     
-    /** @ODM\Field(type="string") */
+    /**
+     * @ODM\Field(type="string")
+     * @Internal\FieldInfo(type="textarea", prompt="Private key")
+     */
     private $privateKey;
     
     /**
@@ -230,28 +258,28 @@ class Server implements \JsonSerializable
         ];
     }
     
-    /**
-     * This function returns the prompt for a field
-     *
-     * @param string $field The field
-     * @return string The prompt for the given field
-     */
-    public function getPrompt($field)
-    {
-        $prompts = [
-            "id" => "",
-            "name" => "Name",
-            "address" => "Address",
-            "port" => "Port (default: 22)",
-            "authMethod" => "Authentication Method",
-            "username" => "Username",
-            "password" => "Password",
-            "publicKey" => "Public Key",
-            "privateKey" => "Private Key"
-        ];
-        
-        return $prompts[$field];
-    }
+    ///**
+    // * This function returns the prompt for a field
+    // *
+    // * @param string $field The field
+    // * @return string The prompt for the given field
+    // */
+    //public function getPrompt($field)
+    //{
+    //    $prompts = [
+    //        "id" => "",
+    //        "name" => "Name",
+    //        "address" => "Address",
+    //        "port" => "Port (default: 22)",
+    //        "authMethod" => "Authentication Method",
+    //        "username" => "Username",
+    //        "password" => "Password",
+    //        "publicKey" => "Public Key",
+    //        "privateKey" => "Private Key"
+    //    ];
+    //    
+    //    return $prompts[$field];
+    //}
     
     /**
      * This function returns the information to be serialized as json
